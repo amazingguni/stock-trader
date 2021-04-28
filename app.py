@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_cors import CORS
 
-from .container import Container
+from container import Container
 
 db = SQLAlchemy()
 migrate = Migrate(db=db)
