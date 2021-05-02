@@ -1,5 +1,5 @@
 import os
-from . import Config
+from .config import Config
 
 
 class DevelopmentConfig(Config):

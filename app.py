@@ -5,15 +5,16 @@ from flask_login import LoginManager
 from flask_cors import CORS
 
 from container import Container
+from config import get_config_by_env
 
 db = SQLAlchemy()
 migrate = Migrate(db=db)
 login_manager = LoginManager()
 
 
-def create_app(config_name='config.development.DevelopmentConfig'):
+def create_app():
     app = Flask(__name__)
-    app.config.from_object(config_name)
+    app.config.from_object(get_config_by_env())
     CORS(app)
 
     db.init_app(app)
