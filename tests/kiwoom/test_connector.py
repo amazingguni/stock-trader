@@ -2,7 +2,7 @@ import sys
 import pytest
 from PyQt5.QtWidgets import QApplication
 
-from core.kiwoom.connector import KiwoomOpenApiConnector
+from core.kiwoom.connector import KiwoomOpenApiConnector, InputValue
 
 
 @pytest.fixture(scope="session")
@@ -29,23 +29,49 @@ def test_retrieve_accounts(connector):
     assert len(accounts) > 0
 
 
-def test_get_total_data(connector):
-    connector.set_input_value("종목코드", '005930')
-    connector.set_input_value("기준일자", '20200424')
-    connector.set_input_value("수정주가구분", 1)
+def test_comm_rq_data(connector):
+    input_values = [
+        InputValue(s_id='종목코드', s_value='005930'),
+        InputValue(s_id='기준일자', s_value='20210424'),
+        InputValue(s_id='수정주가구분', s_value=1),
+    ]
     rqname = 'opt10081_req'
     trcode = 'opt10081'
-    result, has_remain_data = connector.comm_rq_data(rqname, trcode, 0, "0101")
-    print(result[0], has_remain_data)
+    item_key_pair = {
+        '일자': 'date',
+        '시가': 'open',
+        '고가': 'high',
+        '저가': 'low',
+        '현재가': 'close',
+        '거래량': 'volume',
+        '거래대금': 'trading_value'
+    }
+    response = connector.comm_rq_data(
+        input_values, rqname, trcode, 0, item_key_pair)
 
-    for _ in range(100):
-        connector.set_input_value("종목코드", '005930')
-        connector.set_input_value("기준일자", '20200424')
-        connector.set_input_value("수정주가구분", 1)
-        result, has_remain_data = connector.comm_rq_data(
-            rqname, trcode, 2, "0101")
-        print(result[0], has_remain_data)
-        if not has_remain_data:
-            break
+    assert len(response.rows) > 0
+    assert response.has_next
 
-    assert 'repeat_cnt' == 'asdf'
+
+def test_comm_rq_data_repeat(connector):
+    input_values = [
+        InputValue(s_id='종목코드', s_value='005930'),
+        InputValue(s_id='기준일자', s_value='20210424'),
+        InputValue(s_id='수정주가구분', s_value=1),
+    ]
+    rqname = 'opt10081_req'
+    trcode = 'opt10081'
+    item_key_pair = {
+        '일자': 'date',
+        '시가': 'open',
+        '고가': 'high',
+        '저가': 'low',
+        '현재가': 'close',
+        '거래량': 'volume',
+        '거래대금': 'trading_value'
+    }
+    response = connector.comm_rq_data_repeat(
+        input_values, rqname, trcode, item_key_pair)
+
+    assert len(response.rows) > 0
+    assert not response.has_next
