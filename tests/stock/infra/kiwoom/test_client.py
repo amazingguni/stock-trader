@@ -2,14 +2,9 @@ import sys
 import pytest
 from PyQt5.QtWidgets import QApplication
 
-from core.kiwoom.openapi.client import OpenApiClient
-from core.kiwoom.openapi.input_value import InputValue
-from core.kiwoom.openapi.account_info_type import AccountInfoType
-
-
-@pytest.fixture(scope="session")
-def application():
-    return QApplication(sys.argv)
+from core.stock.infra.kiwoom.openapi.client import OpenApiClient
+from core.stock.infra.kiwoom.openapi.input_value import InputValue
+from core.stock.infra.kiwoom.openapi.account_info_type import AccountInfoType
 
 
 @pytest.fixture(scope="module")
@@ -25,10 +20,10 @@ def test_get_connect_state(client):
 
 def test_get_login_info(client):
     # When
-    accounts = client.get_login_info(AccountInfoType.ACCLIST)
+    ret = client.get_login_info(AccountInfoType.ACCLIST)
 
     # Then
-    assert len(accounts) > 0
+    assert len(ret) > 0
 
 
 def test_comm_rq_data(client):
@@ -46,10 +41,9 @@ def test_comm_rq_data(client):
         '저가': 'low',
         '현재가': 'close',
         '거래량': 'volume',
-        '거래대금': 'trading_value'
     }
     response = client.comm_rq_data(
-        input_values, rqname, trcode, 0, item_key_pair)
+        trcode, rqname, input_values, 0, item_key_pair)
 
     assert len(response.rows) > 0
     assert response.has_next
@@ -61,7 +55,6 @@ def test_comm_rq_data_repeat(client):
         InputValue(s_id='기준일자', s_value='20210424'),
         InputValue(s_id='수정주가구분', s_value=1),
     ]
-    rqname = 'opt10081_req'
     trcode = 'opt10081'
     item_key_pair = {
         '일자': 'date',
@@ -70,9 +63,8 @@ def test_comm_rq_data_repeat(client):
         '저가': 'low',
         '현재가': 'close',
         '거래량': 'volume',
-        '거래대금': 'trading_value'
     }
     response = client.comm_rq_data_repeat(
-        input_values, rqname, trcode, item_key_pair)
+        trcode, input_values, item_key_pair)
 
     assert len(response.rows) > 0

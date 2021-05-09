@@ -1,6 +1,5 @@
 import time
 
-from dataclasses import dataclass, field
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QAxContainer import QAxWidget
@@ -46,27 +45,28 @@ class OpenApiClient(QAxWidget):
     def get_connect_state(self):
         return self.dynamicCall('GetConnectState()')
 
-    def get_login_info(self, type: AccountInfoType):
-        ret = self.dynamicCall('GetLoginInfo(QString)', 'ACCNO')
-        accounts = ret.split(';')
-        return accounts
+    def get_login_info(self, info_type: AccountInfoType):
+        print(info_type.name)
+
+        return self.dynamicCall('GetLoginInfo(QString)', info_type.name)
 
     def set_input_value(self, _id, value):
         self.dynamicCall("SetInputValue(QString, QString)", _id, value)
 
-    def comm_rq_data_repeat(self, input_values, rqname, trcode, item_key_pair, retry=5):
+    def comm_rq_data_repeat(self, trcode, input_values, item_key_pair, retry=5):
+        rqname = f'{trcode}_req'
         response = RequestResponse()
         _next = FIRST_REQUEST
         for _ in range(retry):
             each_response = self.comm_rq_data(
-                input_values, rqname, trcode, _next, item_key_pair)
+                trcode, rqname, input_values, _next, item_key_pair)
             response.rows += each_response.rows
             response.has_next = each_response.has_next
             if each_response.has_next:
                 _next = EXISTING_REQUEST
         return response
 
-    def comm_rq_data(self, input_values, rqname, trcode, next, item_key_pair):
+    def comm_rq_data(self, trcode, rqname, input_values, next, item_key_pair):
         for input_value in input_values:
             self.set_input_value(input_value.s_id, input_value.s_value)
         self.dynamicCall(
