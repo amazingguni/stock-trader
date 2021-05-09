@@ -12,5 +12,6 @@ def test_get_account_numbers(connector):
     assert len(accounts) > 0
 
 
-# def test_get_daily_stock():
-#     stocks = connector.get_daily_stock()
+def test_get_daily_stock_summaries(connector):
+    stocks = connector.get_daily_stock('005930', '20210424')
+    assert len(stocks) > 0

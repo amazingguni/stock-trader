@@ -1,5 +1,5 @@
 import time
-
+import typing
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QAxContainer import QAxWidget
@@ -46,14 +46,13 @@ class OpenApiClient(QAxWidget):
         return self.dynamicCall('GetConnectState()')
 
     def get_login_info(self, info_type: AccountInfoType):
-        print(info_type.name)
-
         return self.dynamicCall('GetLoginInfo(QString)', info_type.name)
 
-    def set_input_value(self, _id, value):
+    def set_input_value(self, _id: str, value: str):
         self.dynamicCall("SetInputValue(QString, QString)", _id, value)
 
-    def comm_rq_data_repeat(self, trcode, input_values, item_key_pair, retry=5):
+    def comm_rq_data_repeat(self, trcode: str, input_values: typing.List[InputValue],
+                            item_key_pair: typing.Dict[str, str], retry: int = 5):
         rqname = f'{trcode}_req'
         response = RequestResponse()
         _next = FIRST_REQUEST
@@ -66,7 +65,8 @@ class OpenApiClient(QAxWidget):
                 _next = EXISTING_REQUEST
         return response
 
-    def comm_rq_data(self, trcode, rqname, input_values, next, item_key_pair):
+    def comm_rq_data(self, trcode: str, rqname: str, input_values: typing.List[InputValue],
+                     next: int, item_key_pair: typing.Dict[str, str]):
         for input_value in input_values:
             self.set_input_value(input_value.s_id, input_value.s_value)
         self.dynamicCall(
@@ -83,7 +83,7 @@ class OpenApiClient(QAxWidget):
                     row = {}
                     for item_name, key in item_key_pair.items():
                         row[key] = self.get_comm_data(
-                            trcode, rqname, i, item_name),
+                            trcode, rqname, i, item_name)
                     response.rows.append(row)
             finally:
                 event_loop.exit()
@@ -91,11 +91,11 @@ class OpenApiClient(QAxWidget):
         event_loop.exec_()
         return response
 
-    def get_repeat_cnt(self, trcode, rqname):
+    def get_repeat_cnt(self, trcode: str, rqname: str):
         return self.dynamicCall(
             "GetRepeatCnt(QString, QString)", trcode, rqname)
 
-    def get_comm_data(self, code, field_name, index, item_name):
+    def get_comm_data(self, code: str, field_name: str, index: int, item_name: str):
         return self.dynamicCall(
             "GetCommData(QString, QString, int, QString)", code, field_name, index, item_name).strip()
 

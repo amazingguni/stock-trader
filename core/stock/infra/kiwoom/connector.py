@@ -1,10 +1,13 @@
-import sys
-
-from PyQt5.QtWidgets import QApplication
+from datetime import datetime
+from pytz import timezone, utc
 
 from core.stock.infra.kiwoom.openapi.client import OpenApiClient
 from core.stock.infra.kiwoom.openapi.account_info_type import AccountInfoType
 from core.stock.infra.kiwoom.openapi.input_value import InputValue
+
+from core.stock.domain.stock import DailyStock, StockSummary
+
+KST = timezone('Asia/Seoul')
 
 
 class KiwoomConnector:
@@ -31,5 +34,15 @@ class KiwoomConnector:
             '거래량': 'volume',
         }
         trcode = 'opt10081'
-        ret = self.client.comm_rq_data_repeat(
-            input_values, trcode, item_key_pair)
+        response = self.client.comm_rq_data_repeat(
+            trcode, input_values, item_key_pair)
+
+        def mapper(row):
+            date = datetime.strptime(row['date'], '%Y%m%d')
+            date.replace(tzinfo=KST)
+            date = utc.localize(date)
+            del row['date']
+            summary = StockSummary(**row)
+            return DailyStock(date=date, stock_summary=summary)
+
+        return [mapper(row) for row in response.rows]
