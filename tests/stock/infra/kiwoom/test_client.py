@@ -1,6 +1,4 @@
-import sys
 import pytest
-from PyQt5.QtWidgets import QApplication
 
 from core.stock.infra.kiwoom.openapi.client import OpenApiClient
 from core.stock.infra.kiwoom.openapi.input_value import InputValue

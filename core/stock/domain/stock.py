@@ -1,5 +1,6 @@
+from datetime import datetime
 from mongoengine import Document, EmbeddedDocument, \
-    DateTimeField, EmbeddedDocumentField, StringField, IntField
+    DateTimeField, DateField, EmbeddedDocumentField, StringField, IntField
 
 
 class StockSummary(EmbeddedDocument):
@@ -11,5 +12,7 @@ class StockSummary(EmbeddedDocument):
 
 
 class DailyStock(Document):
-    date = DateTimeField()
+    date = DateField(required=True)
+    stock_code = StringField(required=True)
     stock_summary = EmbeddedDocumentField(StockSummary)
+    created_at = DateTimeField(default=datetime.now)

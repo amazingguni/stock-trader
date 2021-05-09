@@ -8,6 +8,7 @@ from PyQt5.QtCore import QEventLoop
 from .input_value import InputValue
 from .response import ConnectResponse, RequestResponse
 from .account_info_type import AccountInfoType
+from .request_done_condition import RequestDoneCondition, DefaultDoneCondition
 
 TR_REQ_TIME_INTERVAL = 0.2
 DEFAULT_SCREEN_NO = '0101'  # It is just random value
@@ -52,21 +53,24 @@ class OpenApiClient(QAxWidget):
         self.dynamicCall("SetInputValue(QString, QString)", _id, value)
 
     def comm_rq_data_repeat(self, trcode: str, input_values: typing.List[InputValue],
-                            item_key_pair: typing.Dict[str, str], retry: int = 5):
+                            item_key_pair: typing.Dict[str, str], retry: int = 5,
+                            done_condition: RequestDoneCondition = DefaultDoneCondition()):
         rqname = f'{trcode}_req'
         response = RequestResponse()
         _next = FIRST_REQUEST
         for _ in range(retry):
             each_response = self.comm_rq_data(
-                trcode, rqname, input_values, _next, item_key_pair)
+                trcode, rqname, input_values, _next, item_key_pair, done_condition)
             response.rows += each_response.rows
             response.has_next = each_response.has_next
-            if each_response.has_next:
-                _next = EXISTING_REQUEST
+            if not each_response.has_next:
+                break
+            _next = EXISTING_REQUEST
         return response
 
     def comm_rq_data(self, trcode: str, rqname: str, input_values: typing.List[InputValue],
-                     next: int, item_key_pair: typing.Dict[str, str]):
+                     next: int, item_key_pair: typing.Dict[str, str],
+                     done_condition: RequestDoneCondition = DefaultDoneCondition()):
         for input_value in input_values:
             self.set_input_value(input_value.s_id, input_value.s_value)
         self.dynamicCall(
@@ -84,6 +88,9 @@ class OpenApiClient(QAxWidget):
                     for item_name, key in item_key_pair.items():
                         row[key] = self.get_comm_data(
                             trcode, rqname, i, item_name)
+                    if done_condition.done(row):
+                        response.has_next = False
+                        break
                     response.rows.append(row)
             finally:
                 event_loop.exit()

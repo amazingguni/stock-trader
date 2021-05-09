@@ -11,3 +11,6 @@ class DailyStockRepository:
 
     def save_all(self, stocks: typing.List[DailyStock]):
         DailyStock.objects.insert(stocks)
+
+    def find_latest_by_stock_code(self, stock_code: str):
+        return DailyStock.objects(stock_code=stock_code).order_by('-date').first()
