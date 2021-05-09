@@ -1,6 +1,6 @@
 from datetime import datetime
 from mongoengine import Document, \
-    DateTimeField, DateField, StringField, IntField
+    DateTimeField, DateField, StringField
 
 
 class Stock(Document):
@@ -9,6 +9,6 @@ class Stock(Document):
     sector = StringField(required=True, help_text='업종')
     major_product = StringField(help_text='주요 제품')
     listing_date = DateField(help_text='상장일')
-    account_month = IntField(help_text='결산월')
+    account_month = StringField(help_text='결산월')
     region = StringField(help_text='지역')
     created_at = DateTimeField(default=datetime.now)
