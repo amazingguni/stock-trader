@@ -1,11 +1,14 @@
 import time
-import sys
 
 from dataclasses import dataclass, field
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QAxContainer import QAxWidget
 from PyQt5.QtCore import QEventLoop
+
+from .input_value import InputValue
+from .response import ConnectResponse, RequestResponse
+from .account_info_type import AccountInfoType
 
 TR_REQ_TIME_INTERVAL = 0.2
 DEFAULT_SCREEN_NO = '0101'  # It is just random value
@@ -17,24 +20,7 @@ def sleep_to_wait_transaction():
     time.sleep(TR_REQ_TIME_INTERVAL)
 
 
-@dataclass
-class InputValue:
-    s_id: str
-    s_value: 'typing.Any'
-
-
-@dataclass
-class ConnectResponse:
-    error_code: int = 0
-
-
-@dataclass
-class RequestResponse:
-    has_next: bool = False
-    rows: list = field(default_factory=list)
-
-
-class KiwoomOpenApiConnector(QAxWidget):
+class OpenApiClient(QAxWidget):
 
     def __init__(self):
         super().__init__()
@@ -60,7 +46,7 @@ class KiwoomOpenApiConnector(QAxWidget):
     def get_connect_state(self):
         return self.dynamicCall('GetConnectState()')
 
-    def retrieve_accounts(self):
+    def get_login_info(self, type: AccountInfoType):
         ret = self.dynamicCall('GetLoginInfo(QString)', 'ACCNO')
         accounts = ret.split(';')
         return accounts

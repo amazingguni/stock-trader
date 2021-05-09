@@ -2,7 +2,9 @@ import sys
 import pytest
 from PyQt5.QtWidgets import QApplication
 
-from core.kiwoom.connector import KiwoomOpenApiConnector, InputValue
+from core.kiwoom.openapi.client import OpenApiClient
+from core.kiwoom.openapi.input_value import InputValue
+from core.kiwoom.openapi.account_info_type import AccountInfoType
 
 
 @pytest.fixture(scope="session")
@@ -11,25 +13,25 @@ def application():
 
 
 @pytest.fixture(scope="module")
-def connector(application):
-    connector = KiwoomOpenApiConnector()
-    connector.connect()
-    return connector
+def client(application):
+    client = OpenApiClient()
+    client.connect()
+    return client
 
 
-def test_get_connect_state(connector):
-    assert connector.get_connect_state()
+def test_get_connect_state(client):
+    assert client.get_connect_state()
 
 
-def test_retrieve_accounts(connector):
+def test_get_login_info(client):
     # When
-    accounts = connector.retrieve_accounts()
+    accounts = client.get_login_info(AccountInfoType.ACCLIST)
 
     # Then
     assert len(accounts) > 0
 
 
-def test_comm_rq_data(connector):
+def test_comm_rq_data(client):
     input_values = [
         InputValue(s_id='종목코드', s_value='005930'),
         InputValue(s_id='기준일자', s_value='20210424'),
@@ -46,14 +48,14 @@ def test_comm_rq_data(connector):
         '거래량': 'volume',
         '거래대금': 'trading_value'
     }
-    response = connector.comm_rq_data(
+    response = client.comm_rq_data(
         input_values, rqname, trcode, 0, item_key_pair)
 
     assert len(response.rows) > 0
     assert response.has_next
 
 
-def test_comm_rq_data_repeat(connector):
+def test_comm_rq_data_repeat(client):
     input_values = [
         InputValue(s_id='종목코드', s_value='005930'),
         InputValue(s_id='기준일자', s_value='20210424'),
@@ -70,8 +72,7 @@ def test_comm_rq_data_repeat(connector):
         '거래량': 'volume',
         '거래대금': 'trading_value'
     }
-    response = connector.comm_rq_data_repeat(
+    response = client.comm_rq_data_repeat(
         input_values, rqname, trcode, item_key_pair)
 
     assert len(response.rows) > 0
-    assert not response.has_next
