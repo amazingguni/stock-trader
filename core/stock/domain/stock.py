@@ -1,18 +1,14 @@
 from datetime import datetime
-from mongoengine import Document, EmbeddedDocument, \
-    DateTimeField, DateField, EmbeddedDocumentField, StringField, IntField
+from mongoengine import Document, \
+    DateTimeField, DateField, StringField, IntField
 
 
-class StockSummary(EmbeddedDocument):
-    open = IntField()
-    high = IntField()
-    low = IntField()
-    close = IntField()
-    volume = IntField()
-
-
-class DailyStock(Document):
-    date = DateField(required=True)
-    stock_code = StringField(required=True)
-    stock_summary = EmbeddedDocumentField(StockSummary)
+class Stock(Document):
+    name = StringField(required=True, help_text='회사명')
+    code = StringField(required=True, help_text='종목 코드')
+    sector = StringField(required=True, help_text='업종')
+    major_product = StringField(help_text='주요 제품')
+    listing_date = DateField(help_text='상장일')
+    account_month = IntField(help_text='결산월')
+    region = StringField(help_text='지역')
     created_at = DateTimeField(default=datetime.now)

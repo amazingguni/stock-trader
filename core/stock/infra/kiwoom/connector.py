@@ -4,7 +4,7 @@ from core.stock.infra.kiwoom.openapi.client import OpenApiClient
 from core.stock.infra.kiwoom.openapi.account_info_type import AccountInfoType
 from core.stock.infra.kiwoom.openapi.input_value import InputValue
 
-from core.stock.domain.stock import DailyStock, StockSummary
+from core.stock.domain.stock_summary import DailyStockSummary
 
 from .daily_stock_done_condition import DailyStockDoneCondition
 
@@ -45,7 +45,6 @@ class KiwoomConnector(StockConnector):
         def mapper(row):
             _date = parse_date_str(row['date'])
             del row['date']
-            summary = StockSummary(**row)
-            return DailyStock(date=_date, stock_code=stock_code, stock_summary=summary)
+            return DailyStockSummary(date=_date, stock_code=stock_code, **row)
 
         return [mapper(row) for row in response.rows]
