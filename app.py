@@ -1,31 +1,38 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask import Flask, Response
 from flask_login import LoginManager
 from flask_cors import CORS
 
+
 from container import Container
 from config import get_config_by_env
+from web.admin import admin
 
-db = SQLAlchemy()
-migrate = Migrate(db=db)
+from mongodb import db
+
 login_manager = LoginManager()
 
 
 def create_app():
     app = Flask(__name__)
+
+    @app.route('/')
+    # pylint: disable=unused-variable
+    def index():
+        return Response(status=200)
+
     app.config.from_object(get_config_by_env())
     CORS(app)
 
-    db.init_app(app)
-    migrate.init_app(app)
     login_manager.init_app(app)
 
-    container = Container(session=db.session)
+    container = Container()
     app.container = container
-
-    # with app.app_context():
-    #     container.wire(modules=views)
+    from web.admin import views as admin_views
+    views = [admin_views]
+    with app.app_context():
+        container.wire(modules=views)
+    admin.init_app(app)
+    db.init_app(app)
     return app
 
 
