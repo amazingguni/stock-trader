@@ -2,8 +2,14 @@ import time
 import typing
 
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QAxContainer import QAxWidget
 from PyQt5.QtCore import QEventLoop
+
+try:
+    from PyQt5.QAxContainer import QAxWidget
+except ModuleNotFoundError:
+    print("It is only support window environment")
+    QAxWidget = object
+
 
 from .input_value import InputValue
 from .response import ConnectResponse, RequestResponse
