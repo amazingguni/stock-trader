@@ -2,7 +2,7 @@ import pytest
 from datetime import date
 from core.stock.infra.kiwoom.connector import KiwoomConnector
 
-pytestmark = pytest.mark.slow
+pytestmark = pytest.mark.kiwoom
 
 
 @pytest.fixture(scope='module')
