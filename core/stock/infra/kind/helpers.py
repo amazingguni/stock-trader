@@ -1,6 +1,7 @@
 from datetime import datetime
 from core.stock.domain.stock import Stock
 
+
 def mapper(row):
     return Stock(
         name=row['회사명'],
