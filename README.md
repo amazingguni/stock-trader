@@ -1,5 +1,7 @@
 # stock-trader
 
+[![pytest](https://github.com/amazingguni/stock-trader/actions/workflows/pytest.yml/badge.svg)](https://github.com/amazingguni/stock-trader/actions/workflows/pytest.yml) [![codecov](https://codecov.io/gh/amazingguni/stock-trader/branch/main/graph/badge.svg?token=UH56VG0M1Q)](https://codecov.io/gh/amazingguni/stock-trader)
+
 자동 주식 거래를 위한 웹 서비스입니다. DDD(Domain Driven Design) 공부 겸 투자 목적으로 개발하고 있습니다.
 
 ## Requiremensts
