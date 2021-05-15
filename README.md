@@ -1,6 +1,6 @@
 # stock-trader
 
-자동 주식 거래를 위한 웹 서비스입니다. 개인적으로 투자 겸 DDD(Domain Driven Design) 공부 목적으로 개발하고 있습니다.
+자동 주식 거래를 위한 웹 서비스입니다. DDD(Domain Driven Design) 공부 겸 투자 목적으로 개발하고 있습니다.
 
 ## Requiremensts
 
