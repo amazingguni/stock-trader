@@ -27,13 +27,20 @@ def create_app():
 
     container = Container()
     app.container = container
-    from web.admin import views as admin_views
-    views = [admin_views]
+
+    from web.stock import views as stock_views
+    views = [stock_views]
+    register_blueprints(app, views)
     with app.app_context():
         container.wire(modules=views)
     admin.init_app(app)
     db.init_app(app)
     return app
+
+
+def register_blueprints(app, views):
+    for view in views:
+        app.register_blueprint(view.bp)
 
 
 @login_manager.user_loader

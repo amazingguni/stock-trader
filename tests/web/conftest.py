@@ -5,7 +5,7 @@ from flask import template_rendered
 from app import create_app
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def app():
     """ Session wide test 'Flask' application """
     os.environ['CONFIG'] = 'testing'

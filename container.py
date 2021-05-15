@@ -9,6 +9,9 @@ from core.stock.domain.repository.daily_stock_summary_repository import DailySto
 from core.stock.application.sync_stock_service import SyncStockService
 from core.stock.application.crawl_daily_stock_summary_service import CrawlDailyStockSummaryService
 
+from core.stock.infra.kind.kosdaq_crawler import KosdaqCrawler
+from core.stock.infra.kind.kospi_crawler import KospiCrawler
+
 
 class Container(containers.DeclarativeContainer):
     app = providers.Dependency(instance_of=Flask)
@@ -19,6 +22,8 @@ class Container(containers.DeclarativeContainer):
         DailyStockSummaryRepository)
 
     sync_stock_service = providers.Factory(
-        SyncStockService, stock_repository=stock_repository)
+        SyncStockService, stock_repository=stock_repository,
+        stock_crawlers=[KospiCrawler(), KosdaqCrawler()])
     crawl_daily_stock_summary_service = providers.Factory(
-        CrawlDailyStockSummaryService, stock_connector=stock_connector, daily_stock_summary_repository=daily_stock_summary_repository)
+        CrawlDailyStockSummaryService, stock_connector=stock_connector,
+        daily_stock_summary_repository=daily_stock_summary_repository)
