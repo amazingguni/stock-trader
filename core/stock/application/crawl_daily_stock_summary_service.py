@@ -3,7 +3,7 @@ from core.stock.domain.stock_connector import StockConnector
 from core.stock.domain.repository.daily_stock_summary_repository import DailyStockSummaryRepository
 
 
-class CrawlDailyStockService:
+class CrawlDailyStockSummaryService:
     def __init__(self, stock_connector: StockConnector,
                  daily_stock_summary_repository: DailyStockSummaryRepository):
         self.stock_connector = stock_connector

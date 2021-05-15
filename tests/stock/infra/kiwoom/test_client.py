@@ -4,6 +4,8 @@ from core.stock.infra.kiwoom.openapi.client import OpenApiClient
 from core.stock.infra.kiwoom.openapi.input_value import InputValue
 from core.stock.infra.kiwoom.openapi.account_info_type import AccountInfoType
 
+pytestmark = pytest.mark.slow
+
 
 @pytest.fixture(scope="module")
 def client(application):

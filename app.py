@@ -13,7 +13,7 @@ login_manager = LoginManager()
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='./web/templates')
 
     @app.route('/')
     # pylint: disable=unused-variable

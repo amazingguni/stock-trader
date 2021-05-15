@@ -2,6 +2,8 @@ import pytest
 from datetime import date
 from core.stock.infra.kiwoom.connector import KiwoomConnector
 
+pytestmark = pytest.mark.slow
+
 
 @pytest.fixture(scope='module')
 def connector(application):

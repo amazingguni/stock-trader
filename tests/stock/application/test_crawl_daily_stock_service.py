@@ -1,7 +1,8 @@
-import pytest
 from datetime import date
 from unittest import mock
-from core.stock.application.crawl_daily_stock_service import CrawlDailyStockService
+import pytest
+
+from core.stock.application.crawl_daily_stock_summary_service import CrawlDailyStockSummaryService
 from core.stock.domain.stock_summary import DailyStockSummary
 from core.stock.domain.repository.daily_stock_summary_repository import DailyStockSummaryRepository
 
@@ -29,7 +30,7 @@ def test_crawl(daily_stock_summary_repository):
         get_dummy_daily_stock_summary()] * 10
 
     # When
-    service = CrawlDailyStockService(
+    service = CrawlDailyStockSummaryService(
         mock_connector, daily_stock_summary_repository)
     service.crawl('STOCK_CODE')
 
