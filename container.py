@@ -26,4 +26,5 @@ class Container(containers.DeclarativeContainer):
         stock_crawlers=[KospiCrawler(), KosdaqCrawler()])
     crawl_daily_stock_summary_service = providers.Factory(
         CrawlDailyStockSummaryService, stock_connector=stock_connector,
+        stock_repository=stock_repository,
         daily_stock_summary_repository=daily_stock_summary_repository)

@@ -47,8 +47,23 @@ def test_save_all(mongo_connection):
             Stock(name=f'우리식당{i}', code=f'{i:06d}', sector='요식업',
                   major_product='양념치킨', listing_date=date(2018, 6, 16),
                   account_month='4월', region='용인'))
-# When
+    # When
     StockRepository().save_all(stocks)
 
     # Then
     assert Stock.objects.count() == 10
+
+
+def test_find_all(mongo_connection):
+    stocks = []
+    for i in range(1, 11):
+        stocks.append(
+            Stock(name=f'우리식당{i}', code=f'{i:06d}', sector='요식업',
+                  major_product='양념치킨', listing_date=date(2018, 6, 16),
+                  account_month='4월', region='용인'))
+    repository = StockRepository()
+    repository.save_all(stocks)
+
+    # When
+    stocks = repository.find_all()
+    assert len(stocks) == 10
