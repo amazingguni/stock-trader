@@ -5,6 +5,7 @@ from core.stock.infra.kiwoom.openapi.account_info_type import AccountInfoType
 from core.stock.infra.kiwoom.openapi.input_value import InputValue
 
 from core.stock.domain.stock_summary import DailyStockSummary
+from core.stock.domain.stock import Stock
 
 from .daily_stock_done_condition import DailyStockDoneCondition
 
@@ -14,7 +15,8 @@ def parse_date_str(s: str):
 
 
 class KiwoomConnector(StockConnector):
-    def __init__(self):
+    def __init__(self, q_application=None):
+        self.q_application = q_application
         self.client = OpenApiClient()
         self.client.connect()
 
@@ -22,9 +24,9 @@ class KiwoomConnector(StockConnector):
         ret = self.client.get_login_info(AccountInfoType.ACCLIST)
         return list(filter(lambda x: x, ret.split(';')))
 
-    def get_daily_stock(self, stock_code: str, start_date: date, end_date: date):
+    def get_daily_stock_summary(self, stock: Stock, start_date: date, end_date: date):
         input_values = [
-            InputValue(s_id='종목코드', s_value=stock_code),
+            InputValue(s_id='종목코드', s_value=stock.code),
             InputValue(s_id='기준일자', s_value=end_date.strftime('%Y%m%d')),
             InputValue(s_id='수정주가구분', s_value=1),
         ]
@@ -45,6 +47,6 @@ class KiwoomConnector(StockConnector):
         def mapper(row):
             _date = parse_date_str(row['date'])
             del row['date']
-            return DailyStockSummary(date=_date, stock_code=stock_code, **row)
+            return DailyStockSummary(date=_date, stock=stock, **row)
 
         return [mapper(row) for row in response.rows]

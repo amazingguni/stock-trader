@@ -16,10 +16,15 @@ from .response import ConnectResponse, RequestResponse
 from .account_info_type import AccountInfoType
 from .request_done_condition import RequestDoneCondition, DefaultDoneCondition
 
-TR_REQ_TIME_INTERVAL = 0.2
+DYNAMIC_TIME_INTERVAL = 0.2
+TR_REQ_TIME_INTERVAL = 3.8
 DEFAULT_SCREEN_NO = '0101'  # It is just random value
 FIRST_REQUEST = 0
 EXISTING_REQUEST = 2
+
+
+def sleep_to_wait_dynamic_call():
+    time.sleep(DYNAMIC_TIME_INTERVAL)
 
 
 def sleep_to_wait_transaction():
@@ -42,7 +47,7 @@ class OpenApiClient(QAxWidget):
 
         self.OnEventConnect.connect(event_connect_handler)
         self.dynamicCall('CommConnect()')
-        sleep_to_wait_transaction()
+        sleep_to_wait_dynamic_call()
 
         login_event_loop.exec_()
 
@@ -69,6 +74,7 @@ class OpenApiClient(QAxWidget):
                 trcode, rqname, input_values, _next, item_key_pair, done_condition)
             response.rows += each_response.rows
             response.has_next = each_response.has_next
+            sleep_to_wait_transaction()
             if not each_response.has_next:
                 break
             _next = EXISTING_REQUEST
@@ -81,7 +87,7 @@ class OpenApiClient(QAxWidget):
             self.set_input_value(input_value.s_id, input_value.s_value)
         self.dynamicCall(
             "CommRqData(QString, QString, int, QString)", rqname, trcode, next, DEFAULT_SCREEN_NO)
-        sleep_to_wait_transaction()
+
         response = RequestResponse()
         event_loop = QEventLoop()
         def receive_tr_data_handler(screen_no, rqname, trcode, record_name, next,

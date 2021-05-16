@@ -1,5 +1,6 @@
 import typing
 from core.stock.domain.stock_summary import DailyStockSummary
+from core.stock.domain.stock import Stock
 
 
 class DailyStockSummaryRepository:
@@ -10,7 +11,8 @@ class DailyStockSummaryRepository:
         stock.save()
 
     def save_all(self, stocks: typing.List[DailyStockSummary]):
-        DailyStockSummary.objects.insert(stocks)
+        if stocks:
+            DailyStockSummary.objects.insert(stocks)
 
-    def find_latest_by_stock_code(self, stock_code: str):
-        return DailyStockSummary.objects(stock_code=stock_code).order_by('-date').first()
+    def find_latest_by_stock(self, stock: str):
+        return DailyStockSummary.objects(stock=stock).order_by('-date').first()

@@ -1,0 +1,50 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+ Progress!
+
+ {{job_id}}
+
+<style>
+#prog {
+width: 400px;
+border: 1px solid #eee;
+height: 20px;
+}
+#bar {
+width: 0px;
+background-color: #ccc;
+height: 20px;
+}
+</style>
+<h3></h3>
+<div id="prog"><div id="bar"></div></div>
+<div id="desc"></div>
+<div id="pct"></div>
+<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+<script>
+function poll() {
+    $.ajax("{{url_for('.progress', job_id=job_id)}}", {
+        dataType: "json"
+        , success: function(resp) {
+            console.log(resp);
+            progress = resp.current / resp.total 
+            $("#desc").html(resp.message + '  ' + resp.current + '/' + resp.total)
+            $("#pct").html((progress * 100) + '%');
+            $("#bar").css({width: $("#prog").width() * progress});
+            if(progress >= 0.9) {
+                $("#bar").css({backgroundColor: "limegreen"});
+                return;
+            } else {
+                setTimeout(poll, 1000.0);
+            }
+        }
+    });
+}
+$(function() {
+    var job_id = "{{ job_id }}";
+    $("h3").html("JOB: " + job_id);
+    poll();
+});
+</script>
+{% endblock %}

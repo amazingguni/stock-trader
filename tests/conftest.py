@@ -7,6 +7,7 @@ from core.stock.domain.repository.daily_stock_summary_repository import DailySto
 
 @pytest.fixture(scope='function')
 def mongo_connection():
+    disconnect()
     connect('mongoenginetest', host='mongomock://localhost')
     yield get_connection()
     disconnect()

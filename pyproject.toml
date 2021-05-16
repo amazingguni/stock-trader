@@ -19,6 +19,8 @@ mongoengine = "^0.23.1"
 lxml = "^4.6.3"
 Flask-Admin = "^1.5.8"
 flask-mongoengine = "^1.0.0"
+celery = "^5.0.5"
+redis = "^3.5.3"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.5.6"

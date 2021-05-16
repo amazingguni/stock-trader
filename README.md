@@ -19,9 +19,20 @@ $ poetry install
 ```
 ## How to run
 
+Run databases first
+
+```sh
+$ docker-compose up -d
+```
+
 ```sh
 $ poetry run flask run
+# Run selery
+# window에서는 solo를 쓰지 않으면 worker가 생성되지 않는 문제가 있으니 주의 요망
+$ celery -A celery_app worker -l INFO  --pool=solo
 ```
+
+
 
 ## How to test
 

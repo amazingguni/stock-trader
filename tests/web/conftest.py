@@ -1,6 +1,8 @@
 import os
 import pytest
+
 from flask import template_rendered
+from mongoengine import disconnect
 
 from app import create_app
 
@@ -9,6 +11,7 @@ from app import create_app
 def app():
     """ Session wide test 'Flask' application """
     os.environ['CONFIG'] = 'testing'
+    disconnect()
     _app = create_app()
     ctx = _app.app_context()
     ctx.push()

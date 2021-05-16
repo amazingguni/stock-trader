@@ -1,11 +1,13 @@
 from datetime import datetime
 from mongoengine import Document, \
-    DateTimeField, DateField, StringField, IntField
+    DateTimeField, DateField, StringField, IntField, ReferenceField
+
+from core.stock.domain.stock import Stock
 
 
 class DailyStockSummary(Document):
     date = DateField(required=True)
-    stock_code = StringField(required=True)
+    stock = ReferenceField(Stock)
     open = IntField()
     high = IntField()
     low = IntField()

@@ -2,12 +2,17 @@ from datetime import date
 
 from core.stock.domain.repository.daily_stock_summary_repository import DailyStockSummaryRepository
 from core.stock.domain.stock_summary import DailyStockSummary
+from core.stock.domain.stock import Stock
 
 
 def get_dummy_daily_stock_summary():
+    stock = Stock(
+        name='CODE',
+        code='CODE'
+    ).save()
     return DailyStockSummary(
         date=date(2010, 10, 2),
-        stock_code='CODE',
+        stock=stock,
         open=1,
         high=1,
         low=1,
@@ -33,51 +38,57 @@ def test_save_all(mongo_connection):
     assert DailyStockSummary.objects.count() == 10
 
 
-def test_find_latest_by_stock_code_GIVEN_single_stock(mongo_connection):
+def test_find_latest_by_stock_GIVEN_single_stock(mongo_connection):
     repository = DailyStockSummaryRepository()
     summary = get_dummy_daily_stock_summary()
     repository.save(summary)
 
     # When
-    ret_summary = repository.find_latest_by_stock_code(summary.stock_code)
+    ret_summary = repository.find_latest_by_stock(summary.stock)
 
     # Then
     assert ret_summary == summary
 
 
-def test_find_latest_by_stock_code_GIVEN_double_stock(mongo_connection):
+def test_find_latest_by_stock_GIVEN_double_stock(mongo_connection):
     repository = DailyStockSummaryRepository()
+    stock = Stock(
+        name='CODE',
+        code='CODE'
+    ).save()
     summary_a = DailyStockSummary(
         date=date(2010, 1, 2),
-        stock_code='CODE'
+        stock=stock
     )
     summary_b = DailyStockSummary(
         date=date(2021, 3, 5),
-        stock_code='CODE'
+        stock=stock
     )
     repository.save_all([summary_a, summary_b])
 
     # When
-    ret_summary = repository.find_latest_by_stock_code(summary_a.stock_code)
+    ret_summary = repository.find_latest_by_stock(summary_a.stock)
 
     # Then
     assert ret_summary == summary_b
 
 
-def test_find_latest_by_stock_code_GIVEN_different_code(mongo_connection):
+def test_find_latest_by_stock_GIVEN_different_code(mongo_connection):
     repository = DailyStockSummaryRepository()
+    stock = Stock(name='CODE', code='CODE').save()
+    other_stock = Stock(name='OTHER_CODE', code='OTHER_CODE').save()
     summary = DailyStockSummary(
         date=date(2010, 1, 2),
-        stock_code='CODE'
+        stock=stock
     )
     other_summary = DailyStockSummary(
         date=date(2021, 3, 5),
-        stock_code='OTHER_CODE'
+        stock=other_stock
     )
     repository.save_all([summary, other_summary])
 
     # When
-    ret_summary = repository.find_latest_by_stock_code(summary.stock_code)
+    ret_summary = repository.find_latest_by_stock(summary.stock)
 
     # Then
     assert ret_summary == summary

@@ -8,6 +8,7 @@ from config import get_config_by_env
 from web.admin import admin
 
 from mongodb import db
+from container import container
 
 login_manager = LoginManager()
 
@@ -25,7 +26,6 @@ def create_app():
 
     login_manager.init_app(app)
 
-    container = Container()
     app.container = container
 
     from web.stock import views as stock_views
@@ -47,3 +47,6 @@ def register_blueprints(app, views):
 def load_user(user_id):
     from core.user.domain.user import User
     return User.query.filter(User.id == user_id).first()
+
+
+app = create_app()

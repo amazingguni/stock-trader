@@ -4,5 +4,8 @@ from . import Config
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL', 'sqlite:///test.db.sqlite')
+    MONGODB_SETTINGS = {
+        'db': 'test-stock-trader',
+        'host': 'mongomock://localhost',
+        'port': 27017
+    }

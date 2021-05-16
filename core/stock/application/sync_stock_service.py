@@ -13,6 +13,5 @@ class SyncStockService:
         stocks = []
         for crawler in self.stock_crawlers:
             stocks += crawler.crawl()
-
         for stock in stocks:
             self.stock_repository.save_or_modify(stock)

@@ -20,8 +20,7 @@ def sync(
 
 
 @bp.route('/crawl/all-daily-summaries/', methods=['POST', ])
-@inject
-def crawl_all_daily_summaries(
-        crawl_daily_stock_service: CrawlDailyStockSummaryService = Provide[Container.crawl_daily_stock_summary_service]):
-    crawl_daily_stock_service.crawl_all()
-    return redirect(url_for('stock-admin.index_view'))
+def crawl_all_daily_summaries():
+    from tasks.stock_summaries import crawl_daily_stock_all
+    job = crawl_daily_stock_all.delay()
+    return redirect(url_for('crawl-admin.job_status', job_id=job.id))

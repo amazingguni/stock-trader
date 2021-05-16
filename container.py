@@ -1,21 +1,21 @@
+from core.stock.infra.kind.kospi_crawler import KospiCrawler
+from core.stock.infra.kind.kosdaq_crawler import KosdaqCrawler
+from core.stock.application.crawl_daily_stock_summary_service import CrawlDailyStockSummaryService
+from core.stock.application.sync_stock_service import SyncStockService
+from core.stock.domain.repository.daily_stock_summary_repository import DailyStockSummaryRepository
+from core.stock.domain.repository.stock_repository import StockRepository
+from core.stock.infra.kiwoom.connector import KiwoomConnector
+import sys
 from dependency_injector import containers, providers
 
 from flask import Flask
-
-from core.stock.domain.stock_connector import StockConnector
-from core.stock.domain.repository.stock_repository import StockRepository
-from core.stock.domain.repository.daily_stock_summary_repository import DailyStockSummaryRepository
-
-from core.stock.application.sync_stock_service import SyncStockService
-from core.stock.application.crawl_daily_stock_summary_service import CrawlDailyStockSummaryService
-
-from core.stock.infra.kind.kosdaq_crawler import KosdaqCrawler
-from core.stock.infra.kind.kospi_crawler import KospiCrawler
+from PyQt5.QtWidgets import QApplication
 
 
 class Container(containers.DeclarativeContainer):
     app = providers.Dependency(instance_of=Flask)
-    stock_connector = providers.Dependency(instance_of=StockConnector)
+    q_application = providers.Singleton(QApplication, sys.argv)
+    stock_connector = providers.Singleton(KiwoomConnector, q_application)
 
     stock_repository = providers.Factory(StockRepository)
     daily_stock_summary_repository = providers.Factory(
@@ -28,3 +28,6 @@ class Container(containers.DeclarativeContainer):
         CrawlDailyStockSummaryService, stock_connector=stock_connector,
         stock_repository=stock_repository,
         daily_stock_summary_repository=daily_stock_summary_repository)
+
+
+container = Container()
