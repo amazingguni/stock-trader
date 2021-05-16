@@ -9,7 +9,6 @@ from core.stock.domain.stock_summary import DailyStockSummary
 def is_already_crawled(summary: DailyStockSummary):
     if not summary:
         return False
-    date = summary.date
     last_working_date = date.today()
     today_weekday = last_working_date.isoweekday()
     SAT = 6
@@ -18,8 +17,7 @@ def is_already_crawled(summary: DailyStockSummary):
         last_working_date -= timedelta(days=1)
     if today_weekday == SUN:
         last_working_date -= timedelta(days=2)
-
-    return last_working_date <= d
+    return last_working_date <= summary.date
 
 
 class CrawlDailyStockSummaryService:
@@ -41,6 +39,10 @@ class CrawlDailyStockSummaryService:
             return
         start_date = latest_summary.date if latest_summary else None
 
-        stocks = self.stock_connector.get_daily_stock_summary(
-            stock, start_date, end_date)
-        self.daily_stock_summary_repository.save_all(stocks)
+        while True:
+            stocks, has_next = self.stock_connector.get_daily_stock_summary(
+                stock, start_date, end_date)
+            self.daily_stock_summary_repository.save_all(stocks)
+            if not has_next:
+                break
+            end_date = stocks[-1].date - timedelta(days=1)

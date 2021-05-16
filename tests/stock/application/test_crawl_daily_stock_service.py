@@ -4,7 +4,7 @@ import pytest
 
 from core.stock.application.crawl_daily_stock_summary_service import CrawlDailyStockSummaryService
 from core.stock.domain.stock_summary import DailyStockSummary
-from core.stock.domain.stock import Stock
+from core.stock.domain.stock import Stock, MARKET_KOSDAQ
 
 from core.stock.domain.repository.daily_stock_summary_repository import DailyStockSummaryRepository
 from core.stock.domain.repository.stock_repository import StockRepository
@@ -23,7 +23,7 @@ def stock_repository(mongo_connection):
 @pytest.fixture
 def stock(mongo_connection):
     stock = Stock(
-        name='삼성전자', code='000001'
+        name='삼성전자', code='000001', market=MARKET_KOSDAQ
     )
     stock.save()
     return stock
@@ -43,8 +43,8 @@ def get_dummy_daily_stock_summary(stock):
 
 def test_crawl(stock_repository, daily_stock_summary_repository, stock):
     mock_connector = mock.MagicMock()
-    mock_connector.get_daily_stock_summary.return_value = [
-        get_dummy_daily_stock_summary(stock)] * 10
+    mock_connector.get_daily_stock_summary.return_value = ([
+        get_dummy_daily_stock_summary(stock)] * 10, False)
 
     # When
     service = CrawlDailyStockSummaryService(
@@ -57,8 +57,8 @@ def test_crawl(stock_repository, daily_stock_summary_repository, stock):
 
 def test_crawl_all(stock_repository, daily_stock_summary_repository, stock):
     mock_connector = mock.MagicMock()
-    mock_connector.get_daily_stock_summary.return_value = [
-        get_dummy_daily_stock_summary(stock)] * 10
+    mock_connector.get_daily_stock_summary.return_value = ([
+        get_dummy_daily_stock_summary(stock)] * 10, False)
 
     # When
     service = CrawlDailyStockSummaryService(

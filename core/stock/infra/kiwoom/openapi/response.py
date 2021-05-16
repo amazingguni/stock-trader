@@ -10,4 +10,5 @@ class ConnectResponse:
 @dataclass
 class RequestResponse:
     has_next: bool = False
+    error: bool = False
     rows: list = field(default_factory=list)

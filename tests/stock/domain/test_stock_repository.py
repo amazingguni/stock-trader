@@ -1,12 +1,12 @@
 from datetime import date
 
-from core.stock.domain.stock import Stock
+from core.stock.domain.stock import Stock, MARKET_KOSDAQ
 from core.stock.domain.repository.stock_repository import StockRepository
 
 
 def get_dummy_stock():
     return Stock(
-        name='우리회사', code='000000', sector='전자',
+        market=MARKET_KOSDAQ, name='우리회사', code='000000', sector='전자',
         major_product='반도체', listing_date=date(2018, 6, 16),
         account_month='1월', region='수지구')
 
@@ -23,7 +23,7 @@ def test_save_or_modify_GIVEN_existing_stock(mongo_connection):
     StockRepository().save_or_modify(stock)
 
     # When
-    new_stock = Stock(name='우리식당', code='000000', sector='요식업',
+    new_stock = Stock(market=MARKET_KOSDAQ, name='우리식당', code='000000', sector='요식업',
                       major_product='양념치킨', listing_date=date(2018, 6, 16),
                       account_month='4월', region='용인')
     StockRepository().save_or_modify(new_stock)
@@ -44,7 +44,7 @@ def test_save_all(mongo_connection):
     stocks = []
     for i in range(1, 11):
         stocks.append(
-            Stock(name=f'우리식당{i}', code=f'{i:06d}', sector='요식업',
+            Stock(market=MARKET_KOSDAQ, name=f'우리식당{i}', code=f'{i:06d}', sector='요식업',
                   major_product='양념치킨', listing_date=date(2018, 6, 16),
                   account_month='4월', region='용인'))
     # When
@@ -58,8 +58,8 @@ def test_find_all(mongo_connection):
     stocks = []
     for i in range(1, 11):
         stocks.append(
-            Stock(name=f'우리식당{i}', code=f'{i:06d}', sector='요식업',
-                  major_product='양념치킨', listing_date=date(2018, 6, 16),
+            Stock(market=MARKET_KOSDAQ, name=f'우리식당{i}', code=f'{i:06d}',
+                  sector='요식업', major_product='양념치킨', listing_date=date(2018, 6, 16),
                   account_month='4월', region='용인'))
     repository = StockRepository()
     repository.save_all(stocks)

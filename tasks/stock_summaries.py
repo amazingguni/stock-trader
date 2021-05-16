@@ -17,7 +17,7 @@ def crawl_daily_stock_all(self,
     total = len(stocks)
     for i, stock in enumerate(stocks):
         print(stock.name)
-        crawl_daily_stock_service.crawl(stock.code)
+        crawl_daily_stock_service.crawl(stock)
         self.update_state(
             state='PROGRESS',
             meta={'message': stock.name,

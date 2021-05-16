@@ -2,11 +2,12 @@ from datetime import date
 
 from core.stock.domain.repository.daily_stock_summary_repository import DailyStockSummaryRepository
 from core.stock.domain.stock_summary import DailyStockSummary
-from core.stock.domain.stock import Stock
+from core.stock.domain.stock import Stock, MARKET_KOSDAQ
 
 
 def get_dummy_daily_stock_summary():
     stock = Stock(
+        market=MARKET_KOSDAQ,
         name='CODE',
         code='CODE'
     ).save()
@@ -54,7 +55,8 @@ def test_find_latest_by_stock_GIVEN_double_stock(mongo_connection):
     repository = DailyStockSummaryRepository()
     stock = Stock(
         name='CODE',
-        code='CODE'
+        code='CODE',
+        market=MARKET_KOSDAQ
     ).save()
     summary_a = DailyStockSummary(
         date=date(2010, 1, 2),
@@ -75,11 +77,12 @@ def test_find_latest_by_stock_GIVEN_double_stock(mongo_connection):
 
 def test_find_latest_by_stock_GIVEN_different_code(mongo_connection):
     repository = DailyStockSummaryRepository()
-    stock = Stock(name='CODE', code='CODE').save()
-    other_stock = Stock(name='OTHER_CODE', code='OTHER_CODE').save()
+    stock = Stock(name='CODE', code='CODE', market=MARKET_KOSDAQ).save()
+    other_stock = Stock(name='OTHER_CODE', code='OTHER_CODE',
+                        market=MARKET_KOSDAQ).save()
     summary = DailyStockSummary(
         date=date(2010, 1, 2),
-        stock=stock
+        stock=stock,
     )
     other_summary = DailyStockSummary(
         date=date(2021, 3, 5),

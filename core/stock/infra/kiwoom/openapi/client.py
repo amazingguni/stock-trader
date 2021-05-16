@@ -1,8 +1,9 @@
 import time
 import typing
+import traceback
 
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QEventLoop
+from PyQt5.QtCore import QEventLoop, QTimer
 
 try:
     from PyQt5.QAxContainer import QAxWidget
@@ -17,7 +18,7 @@ from .account_info_type import AccountInfoType
 from .request_done_condition import RequestDoneCondition, DefaultDoneCondition
 
 DYNAMIC_TIME_INTERVAL = 0.2
-TR_REQ_TIME_INTERVAL = 3.8
+TR_REQ_TIME_INTERVAL = 4
 DEFAULT_SCREEN_NO = '0101'  # It is just random value
 FIRST_REQUEST = 0
 EXISTING_REQUEST = 2
@@ -36,6 +37,10 @@ class OpenApiClient(QAxWidget):
     def __init__(self):
         super().__init__()
         self.setControl("KHOPENAPI.KHOpenAPICtrl.1")
+        self.OnReceiveMsg.connect(self.__receive_msg)
+
+    def __receive_msg(self, sScrNo, sRQName, sTrCode, sMsg):
+        print(sMsg)
 
     def connect(self):
         response = ConnectResponse()
@@ -64,7 +69,7 @@ class OpenApiClient(QAxWidget):
         self.dynamicCall("SetInputValue(QString, QString)", _id, value)
 
     def comm_rq_data_repeat(self, trcode: str, input_values: typing.List[InputValue],
-                            item_key_pair: typing.Dict[str, str], retry: int = 5,
+                            item_key_pair: typing.Dict[str, str], retry: int = 10,
                             done_condition: RequestDoneCondition = DefaultDoneCondition()):
         rqname = f'{trcode}_req'
         response = RequestResponse()
@@ -78,6 +83,7 @@ class OpenApiClient(QAxWidget):
             if not each_response.has_next:
                 break
             _next = EXISTING_REQUEST
+
         return response
 
     def comm_rq_data(self, trcode: str, rqname: str, input_values: typing.List[InputValue],
@@ -90,6 +96,7 @@ class OpenApiClient(QAxWidget):
 
         response = RequestResponse()
         event_loop = QEventLoop()
+
         def receive_tr_data_handler(screen_no, rqname, trcode, record_name, next,
                                     unused1, unused2, unused3, unused4):
             try:
@@ -104,10 +111,23 @@ class OpenApiClient(QAxWidget):
                         response.has_next = False
                         break
                     response.rows.append(row)
+            except Exception as e:
+                traceback.print_exc()
+                response.error = True
             finally:
-                event_loop.exit()
+                if event_loop.isRunning():
+                    event_loop.exit()
         self.OnReceiveTrData.connect(receive_tr_data_handler)
+
+        def loop_timeout():
+            if event_loop.isRunning():
+                print('event_loop looks not working')
+                response.error = True
+                event_loop.exit()
+        QTimer.singleShot(3000, loop_timeout)
         event_loop.exec_()
+        if response.error:
+            raise TransactionFailedError
         return response
 
     def get_repeat_cnt(self, trcode: str, rqname: str):
@@ -120,4 +140,8 @@ class OpenApiClient(QAxWidget):
 
 
 class ConnectFailedError(Exception):
+    pass
+
+
+class TransactionFailedError(Exception):
     pass
