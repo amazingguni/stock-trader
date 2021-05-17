@@ -2,8 +2,10 @@ from celery import Celery
 
 from app import app as flask_app
 from container import container
+
 TASKS_MODULE = [
     "tasks.stock_summaries",
+    "tasks.sync_stocks",
 ]
 
 
@@ -19,7 +21,8 @@ def make_celery(flask_app):
         def __call__(self, *args, **kwargs):
             with flask_app.app_context():
                 from tasks import stock_summaries
-                container.wire(modules=[stock_summaries])
+                from tasks import sync_stocks
+                container.wire(modules=[stock_summaries, sync_stocks])
                 return self.run(*args, **kwargs)
 
     celery.Task = ContextTask

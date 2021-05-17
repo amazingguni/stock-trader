@@ -55,7 +55,7 @@ class OpenApiClient(QAxWidget):
         sleep_to_wait_dynamic_call()
 
         login_event_loop.exec_()
-
+        self.OnEventConnect.disconnect()
         if response.error_code != 0:
             raise ConnectFailedError
 
@@ -89,6 +89,8 @@ class OpenApiClient(QAxWidget):
     def comm_rq_data(self, trcode: str, rqname: str, input_values: typing.List[InputValue],
                      next: int, item_key_pair: typing.Dict[str, str],
                      done_condition: RequestDoneCondition = DefaultDoneCondition()):
+        if not self.get_connect_state():
+            self.connect()
         for input_value in input_values:
             self.set_input_value(input_value.s_id, input_value.s_value)
         self.dynamicCall(
