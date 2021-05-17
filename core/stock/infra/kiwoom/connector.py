@@ -43,19 +43,16 @@ class KiwoomConnector(StockConnector):
         trcode = 'opt10081'
         done_condition = DailyStockDoneCondition(start_date=start_date)
 
+        def mapper(row):
+            _date = parse_date_str(row['date'])
+            del row['date']
+            return DailyStockSummary(date=_date, stock=stock, **row)
         for i in range(1, 21):
             try:
                 response = self.client.comm_rq_data_repeat(
                     trcode, input_values, item_key_pair,
                     done_condition=done_condition)
-                break
+                return [mapper(row) for row in response.rows], response.has_next
             except TransactionFailedError:
                 print(f'Fail to get {stock.name} daily summary. Retry')
                 sleep(60 * i)
-
-        def mapper(row):
-            _date = parse_date_str(row['date'])
-            del row['date']
-            return DailyStockSummary(date=_date, stock=stock, **row)
-
-        return [mapper(row) for row in response.rows], response.has_next

@@ -22,7 +22,7 @@ class SyncStockService:
             map(lambda stock: stock.code, managing_stocks))
         insincerity_stock_codes = set(
             map(lambda stock: stock.code, insincerity_stocks))
-
+        self.stock_repository.update(update={'active': False})
         for stock in stocks:
             if stock.code in managing_stock_codes:
                 stock.is_managing = True

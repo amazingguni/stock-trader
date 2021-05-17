@@ -69,7 +69,7 @@ class OpenApiClient(QAxWidget):
         self.dynamicCall("SetInputValue(QString, QString)", _id, value)
 
     def comm_rq_data_repeat(self, trcode: str, input_values: typing.List[InputValue],
-                            item_key_pair: typing.Dict[str, str], retry: int = 10,
+                            item_key_pair: typing.Dict[str, str], retry: int = 40,
                             done_condition: RequestDoneCondition = DefaultDoneCondition()):
         rqname = f'{trcode}_req'
         response = RequestResponse()
@@ -126,6 +126,7 @@ class OpenApiClient(QAxWidget):
                 event_loop.exit()
         QTimer.singleShot(3000, loop_timeout)
         event_loop.exec_()
+        self.OnReceiveTrData.disconnect()
         if response.error:
             raise TransactionFailedError
         return response

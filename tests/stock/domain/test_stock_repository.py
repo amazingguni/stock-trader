@@ -67,3 +67,13 @@ def test_find_all(mongo_connection):
     # When
     stocks = repository.find_all()
     assert len(stocks) == 10
+
+
+def test_update(mongo_connection):
+    Stock(market=MARKET_KOSDAQ, name='우리식당1', code='0001').save()
+    Stock(market=MARKET_KOSDAQ, name='우리식당2', code='0002').save()
+    Stock(market=MARKET_KOSDAQ, name='우리식당3', code='0003').save()
+
+    StockRepository().update(update={'active': False})
+
+    assert all([s.active == False for s in Stock.objects.all()])

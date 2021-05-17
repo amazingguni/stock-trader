@@ -13,9 +13,8 @@ class CrawlView(BaseView):
     @expose('/progress')
     def progress(self):
         from celery_app import app
-        from tasks.stock_summaries import crawl_daily_stock_all
         job_id = request.values.get('job_id')
-        job = crawl_daily_stock_all.AsyncResult(job_id, app=app)
+        job = AsyncResult(job_id, app=app)
 
         return json.dumps(dict(
             state=job.state,

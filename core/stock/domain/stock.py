@@ -8,6 +8,7 @@ MARKET_CHOICES = (MARKET_KOSPI, MARKET_KOSDAQ)
 
 
 class Stock(Document):
+    active = BooleanField(default=True, help_text='상장 여부')
     market = StringField(required=True, choices=MARKET_CHOICES,
                          help_text='상장된 마켓(코스피, 코스닥)')
     name = StringField(required=True, help_text='회사명')
