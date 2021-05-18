@@ -14,5 +14,12 @@ class DailyStockSummaryRepository:
         if stocks:
             DailyStockSummary.objects.insert(stocks)
 
-    def find_latest_by_stock(self, stock: str):
-        return DailyStockSummary.objects(stock=stock).order_by('-date').first()
+    def find_latest_date_by_stock(self, stock: Stock):
+        pipeline = [{
+            "$group": {
+                '_id':  '$stock',
+                'latest_date': {'$max': '$date'}
+            }
+        }]
+        data = list(DailyStockSummary.objects(stock=stock).aggregate(pipeline))
+        return data[0]['latest_date'].date() if data else None

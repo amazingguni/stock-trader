@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from core.stock.domain.stock_connector import StockConnector
 from core.stock.domain.repository.stock_repository import StockRepository
 from core.stock.domain.repository.daily_stock_summary_repository import DailyStockSummaryRepository
@@ -6,18 +6,22 @@ from core.stock.domain.stock import Stock
 from core.stock.domain.stock_summary import DailyStockSummary
 
 
-def is_already_crawled(summary: DailyStockSummary):
-    if not summary:
+def is_already_crawled(latest_date: date):
+    if not latest_date:
         return False
-    last_working_date = date.today()
-    today_weekday = last_working_date.isoweekday()
+    now = datetime.now()
+    last_working_date = now.date()
+    # Before closing(18 + buffer), crawl until 1 day before
+    if now.hour < 19:
+        last_working_date -= timedelta(days=1)
+    weekday = last_working_date.isoweekday()
     SAT = 6
     SUN = 7
-    if today_weekday == SAT:
+    if weekday == SAT:
         last_working_date -= timedelta(days=1)
-    if today_weekday == SUN:
+    if weekday == SUN:
         last_working_date -= timedelta(days=2)
-    return last_working_date <= summary.date
+    return last_working_date <= latest_date
 
 
 class CrawlDailyStockSummaryService:
@@ -33,12 +37,12 @@ class CrawlDailyStockSummaryService:
             self.crawl(stock, end_date)
 
     def crawl(self, stock: Stock, end_date: date = date.today()):
-        latest_summary = self.daily_stock_summary_repository.find_latest_by_stock(
+        latest_summary_date = self.daily_stock_summary_repository.find_latest_date_by_stock(
             stock)
-        if is_already_crawled(latest_summary):
+        if is_already_crawled(latest_summary_date):
             return
-        start_date = latest_summary.date if latest_summary else None
 
+        start_date = latest_summary_date
         while True:
             stocks, has_next = self.stock_connector.get_daily_stock_summary(
                 stock, start_date, end_date)

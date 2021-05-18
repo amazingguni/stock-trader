@@ -18,7 +18,7 @@ from .account_info_type import AccountInfoType
 from .request_done_condition import RequestDoneCondition, DefaultDoneCondition
 
 DYNAMIC_TIME_INTERVAL = 0.2
-TR_REQ_TIME_INTERVAL = 4
+TR_REQ_TIME_INTERVAL = 3.6
 DEFAULT_SCREEN_NO = '0101'  # It is just random value
 FIRST_REQUEST = 0
 EXISTING_REQUEST = 2

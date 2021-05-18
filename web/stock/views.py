@@ -9,9 +9,9 @@ bp = Blueprint('stock', __name__,
 
 @bp.route('/sync/', methods=['POST', ])
 def sync():
-    from tasks.sync_stocks import sync
-    job = sync().delay()
-    return redirect(url_for('crawl-admin.job_status', job_id=job.id))
+    from tasks.stock import sync_stocks
+    job = sync_stocks.delay()
+    return redirect(url_for('stock-admin.index_view', job_id=job.id))
 
 
 @bp.route('/crawl/all-daily-summaries/', methods=['POST', ])

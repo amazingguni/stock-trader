@@ -5,7 +5,7 @@ from container import container
 
 TASKS_MODULE = [
     "tasks.stock_summaries",
-    "tasks.sync_stocks",
+    "tasks.stock",
 ]
 
 
@@ -21,8 +21,8 @@ def make_celery(flask_app):
         def __call__(self, *args, **kwargs):
             with flask_app.app_context():
                 from tasks import stock_summaries
-                from tasks import sync_stocks
-                container.wire(modules=[stock_summaries, sync_stocks])
+                from tasks import stock
+                container.wire(modules=[stock_summaries, stock])
                 return self.run(*args, **kwargs)
 
     celery.Task = ContextTask
