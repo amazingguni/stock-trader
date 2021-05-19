@@ -1,8 +1,7 @@
 # from celery import current_task
 from dependency_injector.wiring import inject, Provide
-from celery_app import app
-
 from container import Container
+from celery_app import app
 
 from core.stock.application.crawl_daily_stock_summary_service import CrawlDailyStockSummaryService
 from core.stock.domain.stock_connector import StockConnector
