@@ -49,7 +49,7 @@ def test_crawl(stock_repository, daily_stock_summary_repository, stock):
     # When
     service = CrawlDailyStockSummaryService(
         mock_connector, stock_repository, daily_stock_summary_repository)
-    service.crawl(stock)
+    service.crawl(stock, date(2010, 10, 1), date(2010, 10, 3))
 
     # Then
     assert DailyStockSummary.objects.count() == 10
@@ -63,7 +63,7 @@ def test_crawl_all(stock_repository, daily_stock_summary_repository, stock):
     # When
     service = CrawlDailyStockSummaryService(
         mock_connector, stock_repository, daily_stock_summary_repository)
-    service.crawl_all()
+    list(service.crawl_all())
 
     # Then
     assert DailyStockSummary.objects.count() == 10

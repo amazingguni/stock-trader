@@ -8,6 +8,7 @@ from core.stock.infra.kiwoom.openapi.input_value import InputValue
 
 from core.stock.domain.stock_summary import DailyStockSummary
 from core.stock.domain.stock import Stock
+from core.stock.domain.deposit import Deposit
 
 from .daily_stock_done_condition import DailyStockDoneCondition
 
@@ -21,6 +22,7 @@ class KiwoomConnector(StockConnector):
         self.q_application = q_application
         self.client = OpenApiClient()
         self.client.connect()
+        self.account_numbers = self.get_account_numbers()
 
     def get_account_numbers(self):
         ret = self.client.get_login_info(AccountInfoType.ACCLIST)
@@ -56,3 +58,25 @@ class KiwoomConnector(StockConnector):
             except TransactionFailedError:
                 print(f'Fail to get {stock.name} daily summary. Retry')
                 sleep(60 * i)
+
+    def get_account_deposit(self):
+        input_values = [
+            InputValue(s_id='계좌번호', s_value=self.account_numbers[0]),
+            InputValue(s_id='비밀번호입력매체구분', s_value=00),
+            # 조회구분 = 1:추정조회, 2:일반조회
+            InputValue(s_id='조회구분', s_value=1),
+        ]
+        item_key_pair = {
+            '예수금': 'deposit',
+            'd+2출금가능금액': 'd2_withdrawable_deposit',
+        }
+        trcode = 'opw00001'
+        response = self.client.comm_rq_single_data(
+            trcode, input_values, item_key_pair)
+
+        def mapper(row):
+            return Deposit(
+                d2_withdrawable_deposit=int(row['d2_withdrawable_deposit']),
+                deposit=int(row['deposit']))
+        deposits = [mapper(row) for row in response.rows]
+        return deposits[0] if deposits else None

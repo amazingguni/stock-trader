@@ -19,7 +19,9 @@ from .request_done_condition import RequestDoneCondition, DefaultDoneCondition
 
 DYNAMIC_TIME_INTERVAL = 0.2
 TR_REQ_TIME_INTERVAL = 3.6
+
 DEFAULT_SCREEN_NO = '0101'  # It is just random value
+
 FIRST_REQUEST = 0
 EXISTING_REQUEST = 2
 
@@ -71,12 +73,11 @@ class OpenApiClient(QAxWidget):
     def comm_rq_data_repeat(self, trcode: str, input_values: typing.List[InputValue],
                             item_key_pair: typing.Dict[str, str], retry: int = 40,
                             done_condition: RequestDoneCondition = DefaultDoneCondition()):
-        rqname = f'{trcode}_req'
         response = RequestResponse()
         _next = FIRST_REQUEST
         for _ in range(retry):
             each_response = self.comm_rq_data(
-                trcode, rqname, input_values, _next, item_key_pair, done_condition)
+                trcode, input_values, _next, item_key_pair, done_condition)
             response.rows += each_response.rows
             response.has_next = each_response.has_next
             sleep_to_wait_transaction()
@@ -86,11 +87,12 @@ class OpenApiClient(QAxWidget):
 
         return response
 
-    def comm_rq_data(self, trcode: str, rqname: str, input_values: typing.List[InputValue],
+    def comm_rq_data(self, trcode: str, input_values: typing.List[InputValue],
                      next: int, item_key_pair: typing.Dict[str, str],
                      done_condition: RequestDoneCondition = DefaultDoneCondition()):
         if not self.get_connect_state():
             self.connect()
+        rqname = f'{trcode}_req'
         for input_value in input_values:
             self.set_input_value(input_value.s_id, input_value.s_value)
         self.dynamicCall(
@@ -113,6 +115,46 @@ class OpenApiClient(QAxWidget):
                         response.has_next = False
                         break
                     response.rows.append(row)
+            except Exception as e:
+                traceback.print_exc()
+                response.error = True
+            finally:
+                if event_loop.isRunning():
+                    event_loop.exit()
+        self.OnReceiveTrData.connect(receive_tr_data_handler)
+
+        def loop_timeout():
+            if event_loop.isRunning():
+                print('event_loop looks not working')
+                response.error = True
+                event_loop.exit()
+        QTimer.singleShot(3000, loop_timeout)
+        event_loop.exec_()
+        self.OnReceiveTrData.disconnect()
+        if response.error:
+            raise TransactionFailedError
+        return response
+
+    def comm_rq_single_data(self, trcode: str, input_values: typing.List[InputValue], item_key_pair: typing.Dict[str, str]):
+        if not self.get_connect_state():
+            self.connect()
+        for input_value in input_values:
+            self.set_input_value(input_value.s_id, input_value.s_value)
+        rqname = f'{trcode}_req'
+        self.dynamicCall(
+            "CommRqData(QString, QString, int, QString)", rqname, trcode, FIRST_REQUEST, DEFAULT_SCREEN_NO)
+
+        response = RequestResponse()
+        event_loop = QEventLoop()
+
+        def receive_tr_data_handler(screen_no, rqname, trcode, record_name, next,
+                                    unused1, unused2, unused3, unused4):
+            try:
+                row = {}
+                for item_name, key in item_key_pair.items():
+                    row[key] = self.get_comm_data(
+                        trcode, rqname, 0, item_name)
+                response.rows.append(row)
             except Exception as e:
                 traceback.print_exc()
                 response.error = True

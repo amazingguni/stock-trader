@@ -1,6 +1,5 @@
 import typing
 from core.stock.domain.stock_summary import DailyStockSummary
-from core.stock.domain.stock import Stock
 
 
 class DailyStockSummaryRepository:
@@ -14,12 +13,12 @@ class DailyStockSummaryRepository:
         if stocks:
             DailyStockSummary.objects.insert(stocks)
 
-    def find_latest_date_by_stock(self, stock: Stock):
+    def find_latest_dates_by_stock_id(self):
         pipeline = [{
             "$group": {
                 '_id':  '$stock',
                 'latest_date': {'$max': '$date'}
             }
         }]
-        data = list(DailyStockSummary.objects(stock=stock).aggregate(pipeline))
-        return data[0]['latest_date'].date() if data else None
+        cursor = DailyStockSummary.objects.aggregate(pipeline)
+        return {item['_id']: item['latest_date'].date() for item in cursor}

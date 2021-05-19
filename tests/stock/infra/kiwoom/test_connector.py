@@ -25,3 +25,9 @@ def test_get_daily_stock_summary(connector):
     stocks, _ = connector.get_daily_stock_summary(
         stock, date(2021, 4, 12), date(2021, 4, 16))
     assert len(stocks) == 4
+
+
+def test_get_account_deposit(connector):
+    deposit = connector.get_account_deposit()
+    assert deposit.deposit > 0
+    assert deposit.d2_withdrawable_deposit > 0
