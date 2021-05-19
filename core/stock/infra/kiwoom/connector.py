@@ -18,8 +18,9 @@ def parse_date_str(s: str):
 
 
 class KiwoomConnector(StockConnector):
-    def __init__(self, open_api_client):
-        self.client = open_api_client
+    def __init__(self, q_application):
+        self.q_application = q_application
+        self.client = OpenApiClient()
         self.client.connect()
         self.account_numbers = self.get_account_numbers()
 

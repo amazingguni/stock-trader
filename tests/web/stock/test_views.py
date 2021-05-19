@@ -1,6 +1,3 @@
-import pytest
-from time import sleep
-from http import HTTPStatus
 from flask import url_for
 
 from tests.web.utils import assert_redirect_response

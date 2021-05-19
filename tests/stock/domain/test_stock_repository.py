@@ -74,6 +74,6 @@ def test_update(mongo_connection):
     Stock(market=MARKET_KOSDAQ, name='우리식당2', code='0002').save()
     Stock(market=MARKET_KOSDAQ, name='우리식당3', code='0003').save()
 
-    StockRepository().update_all(update={'active': False})
+    StockRepository().update_all(query={}, update={'active': False})
 
-    assert all([s.active == False for s in Stock.objects.all()])
+    assert all([not s.active for s in Stock.objects.all()])

@@ -1,5 +1,3 @@
-import typing
-
 from core.stock.domain.repository.stock_repository import StockRepository
 from core.stock.infra.kind.kospi_crawler import KospiCrawler
 from core.stock.infra.kind.kosdaq_crawler import KosdaqCrawler
@@ -22,7 +20,7 @@ class SyncStockService:
             map(lambda stock: stock.code, managing_stocks))
         insincerity_stock_codes = set(
             map(lambda stock: stock.code, insincerity_stocks))
-        self.stock_repository.update_all(update={'active': False})
+        self.stock_repository.update_all(query={}, update={'active': False})
         existing_code_stock_dic = {
             stock.code: stock for stock in self.stock_repository.find_all()}
         for stock in crawled_stocks:
