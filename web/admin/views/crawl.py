@@ -4,6 +4,8 @@ from flask import request
 from flask_admin import BaseView, expose
 from celery.result import AsyncResult
 
+from celery_app import app as celery_app
+
 
 class CrawlView(BaseView):
     @expose('/')
@@ -12,9 +14,8 @@ class CrawlView(BaseView):
 
     @expose('/progress')
     def progress(self):
-        from celery_app import app
         job_id = request.values.get('job_id')
-        job = AsyncResult(job_id, app=app)
+        job = AsyncResult(job_id, app=celery_app)
 
         return json.dumps(dict(
             state=job.state,

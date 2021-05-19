@@ -8,7 +8,8 @@ from core.stock.infra.kiwoom.openapi.input_value import InputValue
 
 from core.stock.domain.stock_summary import DailyStockSummary
 from core.stock.domain.stock import Stock
-from core.stock.domain.deposit import Deposit
+
+from core.deposit.domain.deposit import Deposit
 
 from .daily_stock_done_condition import DailyStockDoneCondition
 

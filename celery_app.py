@@ -1,7 +1,7 @@
 from celery import Celery
 
-from app import app as flask_app
 from container import container
+from config import get_config_by_env
 
 TASKS_MODULE = [
     "tasks.stock_summaries",
@@ -9,25 +9,24 @@ TASKS_MODULE = [
 ]
 
 
-def make_celery(flask_app):
+def make_celery():
+    config = get_config_by_env()
     celery = Celery(
-        flask_app.import_name,
-        backend=flask_app.config['CELERY_RESULT_BACKEND'],
-        broker=flask_app.config['CELERY_BROKER_URL'],
+        backend=config.CELERY_RESULT_BACKEND,
+        broker=config.CELERY_BROKER_URL,
         include=TASKS_MODULE
     )
 
     class ContextTask(celery.Task):
         def __call__(self, *args, **kwargs):
-            with flask_app.app_context():
-                from tasks import stock_summaries
-                from tasks import stock
-                container.wire(modules=[stock_summaries, stock])
-                return self.run(*args, **kwargs)
+            from tasks import stock_summaries
+            from tasks import stock
+            container.wire(modules=[stock_summaries, stock])
+            return self.run(*args, **kwargs)
 
     celery.Task = ContextTask
     return celery
 
 
-app = make_celery(flask_app)
+app = make_celery()
 app.autodiscover_tasks()

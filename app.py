@@ -3,7 +3,6 @@ from flask_login import LoginManager
 from flask_cors import CORS
 
 
-from container import Container
 from config import get_config_by_env
 from web.admin import admin
 
@@ -31,8 +30,15 @@ def create_app():
     from web.stock import views as stock_views
     views = [stock_views]
     register_blueprints(app, views)
+
+    from web.admin.views import crawl as admin_crawl_views
+    from web.admin.views import portfolio as admin_portfolio_views
+
+    admin_views = [admin_crawl_views, admin_portfolio_views, ]
+
     with app.app_context():
         container.wire(modules=views)
+        container.wire(modules=admin_views)
     admin.init_app(app)
     db.init_app(app)
     return app

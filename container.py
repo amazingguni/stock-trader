@@ -9,6 +9,8 @@ from core.stock.domain.repository.daily_stock_summary_repository import DailySto
 from core.stock.domain.repository.stock_repository import StockRepository
 from core.stock.infra.kiwoom.connector import KiwoomConnector
 
+from core.deposit.domain.deposit_repository import DepositRepository
+
 
 class Container(containers.DeclarativeContainer):
     app = providers.Dependency(instance_of=Flask)
@@ -18,6 +20,7 @@ class Container(containers.DeclarativeContainer):
     stock_repository = providers.Factory(StockRepository)
     daily_stock_summary_repository = providers.Factory(
         DailyStockSummaryRepository)
+    deposit_repository = providers.Factory(DepositRepository)
 
     sync_stock_service = providers.Factory(
         SyncStockService, stock_repository=stock_repository)

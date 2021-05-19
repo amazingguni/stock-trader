@@ -168,9 +168,12 @@ class OpenApiClient(QAxWidget):
                 print('event_loop looks not working')
                 response.error = True
                 event_loop.exit()
-        QTimer.singleShot(3000, loop_timeout)
+        timer = QTimer()
+        timer.timeout.connect(loop_timeout)
+        timer.start(5000)
         event_loop.exec_()
-        self.OnReceiveTrData.disconnect()
+        timer.stop()
+        self.OnReceiveTrData.disconnect(receive_tr_data_handler)
         if response.error:
             raise TransactionFailedError
         return response

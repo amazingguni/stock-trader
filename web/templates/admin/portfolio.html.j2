@@ -1,0 +1,23 @@
+{% extends 'admin/master.html' %}
+{% import 'admin/lib.html' as lib with context %}
+
+{% block body %}
+<table class="table">
+<thead>
+  <tr>
+    <th scope="col">name</th>
+    <th scope="col">content</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <th scope="row">예수금</th>
+    <td>{{ deposit }}</td>
+  </tr>
+  <tr>
+    <th scope="row">D+2출금가능금액</th>
+    <td>{{ d2_withdrawable_deposit }}</td>
+  </tr>
+</tbody>
+</table>
+{% endblock %}
