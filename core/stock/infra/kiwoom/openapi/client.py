@@ -2,7 +2,6 @@ import time
 import typing
 import traceback
 
-from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QEventLoop, QTimer
 
 try:
@@ -115,7 +114,7 @@ class OpenApiClient(QAxWidget):
                         response.has_next = False
                         break
                     response.rows.append(row)
-            except Exception as e:
+            except Exception:
                 traceback.print_exc()
                 response.error = True
             finally:
@@ -135,7 +134,8 @@ class OpenApiClient(QAxWidget):
             raise TransactionFailedError
         return response
 
-    def comm_rq_single_data(self, trcode: str, input_values: typing.List[InputValue], item_key_pair: typing.Dict[str, str]):
+    def comm_rq_single_data(self, trcode: str, input_values: typing.List[InputValue],
+                            item_key_pair: typing.Dict[str, str]):
         if not self.get_connect_state():
             self.connect()
         for input_value in input_values:
@@ -155,7 +155,7 @@ class OpenApiClient(QAxWidget):
                     row[key] = self.get_comm_data(
                         trcode, rqname, 0, item_name)
                 response.rows.append(row)
-            except Exception as e:
+            except Exception:
                 traceback.print_exc()
                 response.error = True
             finally:

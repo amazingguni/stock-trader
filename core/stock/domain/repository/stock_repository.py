@@ -22,5 +22,8 @@ class StockRepository:
     def find_all(self):
         return Stock.objects.all()
 
-    def update(self, query=dict(), update=dict()):
+    def update_all(self, query={}, update={}):
         Stock.objects(**query).update(**update)
+
+    def update(self, stock, update={}):
+        stock.update(**update)

@@ -1,5 +1,6 @@
-import pytest
 from datetime import date
+
+import pytest
 
 from core.stock.infra.kiwoom.connector import KiwoomConnector
 from core.stock.domain.stock import Stock
@@ -7,9 +8,9 @@ from core.stock.domain.stock import Stock
 pytestmark = [pytest.mark.kiwoom, pytest.mark.slow]
 
 
-@pytest.fixture(scope='module')
-def connector(application):
-    return KiwoomConnector()
+@pytest.fixture(scope='package')
+def connector(client):
+    return KiwoomConnector(client)
 
 
 def test_get_account_numbers(connector):

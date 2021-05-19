@@ -39,59 +39,29 @@ def test_save_all(mongo_connection):
     assert DailyStockSummary.objects.count() == 10
 
 
-def test_find_latest_by_stock_GIVEN_single_stock(mongo_connection):
-    repository = DailyStockSummaryRepository()
-    summary = get_dummy_daily_stock_summary()
-    repository.save(summary)
-
-    # When
-    ret_summary = repository.find_latest_by_stock(summary.stock)
-
-    # Then
-    assert ret_summary == summary
-
-
-def test_find_latest_by_stock_GIVEN_double_stock(mongo_connection):
-    repository = DailyStockSummaryRepository()
-    stock = Stock(
-        name='CODE',
-        code='CODE',
-        market=MARKET_KOSDAQ
+def test_find_latest_dates_by_stock_id(mongo_connection):
+    stock_a = Stock(
+        market=MARKET_KOSDAQ,
+        name='A_Company',
+        code='00001'
     ).save()
-    summary_a = DailyStockSummary(
-        date=date(2010, 1, 2),
-        stock=stock
-    )
-    summary_b = DailyStockSummary(
-        date=date(2021, 3, 5),
-        stock=stock
-    )
-    repository.save_all([summary_a, summary_b])
+    stock_b = Stock(
+        market=MARKET_KOSDAQ,
+        name='B_Company',
+        code='00002'
+    ).save()
+    DailyStockSummary(stock=stock_a, date=date(2016, 1, 2)).save()
+    DailyStockSummary(stock=stock_a, date=date(2008, 1, 2)).save()
+    DailyStockSummary(stock=stock_a, date=date(2018, 1, 2)).save()
+
+    DailyStockSummary(stock=stock_b, date=date(2017, 1, 2)).save()
+    DailyStockSummary(stock=stock_b, date=date(2020, 1, 2)).save()
+    DailyStockSummary(stock=stock_b, date=date(2001, 1, 2)).save()
 
     # When
-    ret_summary = repository.find_latest_by_stock(summary_a.stock)
+    stock_id_latest_date_dic = DailyStockSummaryRepository().find_latest_dates_by_stock_id()
 
     # Then
-    assert ret_summary == summary_b
-
-
-def test_find_latest_by_stock_GIVEN_different_code(mongo_connection):
-    repository = DailyStockSummaryRepository()
-    stock = Stock(name='CODE', code='CODE', market=MARKET_KOSDAQ).save()
-    other_stock = Stock(name='OTHER_CODE', code='OTHER_CODE',
-                        market=MARKET_KOSDAQ).save()
-    summary = DailyStockSummary(
-        date=date(2010, 1, 2),
-        stock=stock,
-    )
-    other_summary = DailyStockSummary(
-        date=date(2021, 3, 5),
-        stock=other_stock
-    )
-    repository.save_all([summary, other_summary])
-
-    # When
-    ret_summary = repository.find_latest_by_stock(summary.stock)
-
-    # Then
-    assert ret_summary == summary
+    assert stock_id_latest_date_dic
+    assert stock_id_latest_date_dic[stock_a.id] == date(2018, 1, 2)
+    assert stock_id_latest_date_dic[stock_b.id] == date(2020, 1, 2)
