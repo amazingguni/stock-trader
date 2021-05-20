@@ -34,11 +34,14 @@ def sleep_to_wait_transaction():
 
 
 class OpenApiClient(QAxWidget):
-
     def __init__(self):
         super().__init__()
-        self.setControl("KHOPENAPI.KHOpenAPICtrl.1")
+        self.__create_open_api_instance()
         self.OnReceiveMsg.connect(self.__receive_msg)
+
+    def __create_open_api_instance(self):
+        self.clear()
+        self.setControl("KHOPENAPI.KHOpenAPICtrl.1")
 
     def __receive_msg(self, sScrNo, sRQName, sTrCode, sMsg):
         print(sMsg)
@@ -52,12 +55,12 @@ class OpenApiClient(QAxWidget):
             login_event_loop.exit()
 
         self.OnEventConnect.connect(event_connect_handler)
-        self.dynamicCall('CommConnect()')
         sleep_to_wait_dynamic_call()
-
+        self.dynamicCall('CommConnect()')
         login_event_loop.exec_()
         self.OnEventConnect.disconnect()
         if response.error_code != 0:
+            self.__create_open_api_instance()
             raise ConnectFailedError
 
     def get_connect_state(self):
@@ -94,8 +97,10 @@ class OpenApiClient(QAxWidget):
         rqname = f'{trcode}_req'
         for input_value in input_values:
             self.set_input_value(input_value.s_id, input_value.s_value)
-        self.dynamicCall(
+        ret = self.dynamicCall(
             "CommRqData(QString, QString, int, QString)", rqname, trcode, next, DEFAULT_SCREEN_NO)
+        if ret == -200:
+            raise RateLimitExceeded()
 
         response = RequestResponse()
         event_loop = QEventLoop()
@@ -141,8 +146,10 @@ class OpenApiClient(QAxWidget):
         for input_value in input_values:
             self.set_input_value(input_value.s_id, input_value.s_value)
         rqname = f'{trcode}_req'
-        self.dynamicCall(
+        ret = self.dynamicCall(
             "CommRqData(QString, QString, int, QString)", rqname, trcode, FIRST_REQUEST, DEFAULT_SCREEN_NO)
+        if ret == -200:
+            raise RateLimitExceeded()
 
         response = RequestResponse()
         event_loop = QEventLoop()
@@ -168,11 +175,8 @@ class OpenApiClient(QAxWidget):
                 print('event_loop looks not working')
                 response.error = True
                 event_loop.exit()
-        timer = QTimer()
-        timer.timeout.connect(loop_timeout)
-        timer.start(5000)
+        QTimer.singleShot(3000, loop_timeout)
         event_loop.exec_()
-        timer.stop()
         self.OnReceiveTrData.disconnect(receive_tr_data_handler)
         if response.error:
             raise TransactionFailedError
@@ -187,9 +191,22 @@ class OpenApiClient(QAxWidget):
             "GetCommData(QString, QString, int, QString)", code, field_name, index, item_name).strip()
 
 
-class ConnectFailedError(Exception):
-    pass
+class KiwoomError(Exception):
+    def __init__(self, msg):
+        super().__init__()
+        self.msg = msg
 
 
-class TransactionFailedError(Exception):
-    pass
+class ConnectFailedError(KiwoomError):
+    def __init__(self):
+        super().__init__('접속 실패')
+
+
+class TransactionFailedError(KiwoomError):
+    def __init__(self):
+        super().__init__('트랜젝션 실패')
+
+
+class RateLimitExceeded(KiwoomError):
+    def __init__(self):
+        super().__init__('요청제한 횟수를 초과하였습니다.')

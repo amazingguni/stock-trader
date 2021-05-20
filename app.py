@@ -4,10 +4,10 @@ from flask_cors import CORS
 
 
 from config import get_config_by_env
+from container import Container
 from web.admin import admin
 
 from mongodb import db
-from container import container
 
 login_manager = LoginManager()
 
@@ -25,6 +25,7 @@ def create_app():
 
     login_manager.init_app(app)
 
+    container = Container()
     app.container = container
 
     from web.stock import views as stock_views

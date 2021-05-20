@@ -1,6 +1,6 @@
 from celery import Celery
 import mongoengine
-from container import container
+from container import Container
 from config import get_config_by_env
 
 TASKS_MODULE = [
@@ -20,6 +20,7 @@ def make_celery():
         db=config.MONGODB_SETTINGS['db'],
         host=config.MONGODB_SETTINGS['host'],
         port=config.MONGODB_SETTINGS['port'])
+    container = Container()
 
     class ContextTask(celery.Task):
         def __call__(self, *args, **kwargs):

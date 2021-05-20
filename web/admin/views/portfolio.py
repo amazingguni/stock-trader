@@ -1,6 +1,4 @@
 from flask_admin import BaseView, expose
-
-
 from tasks.stock_summaries import get_account_deposit
 
 

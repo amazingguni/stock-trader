@@ -28,6 +28,3 @@ class Container(containers.DeclarativeContainer):
         CrawlDailyStockSummaryService, stock_connector=stock_connector,
         stock_repository=stock_repository,
         daily_stock_summary_repository=daily_stock_summary_repository)
-
-
-container = Container()
