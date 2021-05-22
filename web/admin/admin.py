@@ -1,6 +1,6 @@
 from flask_admin import Admin
 from core.stock.domain.stock import Stock
-from core.stock.domain.stock_summary import DailyStockSummary
+from core.summary.domain import DailyStockSummary
 from .views.stock import StockView
 from .views.daily_stock_summary import DailyStockSummaryView
 from .views.crawl import CrawlView

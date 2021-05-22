@@ -1,7 +1,9 @@
+from flask import flash
+
 from flask_admin.actions import action
 from flask_admin.contrib.mongoengine import ModelView
-from flask import flash
-from core.stock.domain.stock_summary import DailyStockSummary
+
+from core.summary.domain import DailyStockSummary
 
 
 class StockView(ModelView):

@@ -2,12 +2,12 @@ from datetime import datetime
 from mongoengine import Document, \
     DateTimeField, DateField, StringField, BooleanField
 
-MARKET_KOSPI = 'KOSPI'
-MARKET_KOSDAQ = 'KOSDAQ'
-MARKET_CHOICES = (MARKET_KOSPI, MARKET_KOSDAQ)
-
 
 class Stock(Document):
+    MARKET_KOSPI = 'KOSPI'
+    MARKET_KOSDAQ = 'KOSDAQ'
+    MARKET_CHOICES = (MARKET_KOSPI, MARKET_KOSDAQ)
+
     active = BooleanField(default=True, help_text='상장 여부')
     market = StringField(required=True, choices=MARKET_CHOICES,
                          help_text='상장된 마켓(코스피, 코스닥)')
