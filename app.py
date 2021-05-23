@@ -32,10 +32,10 @@ def create_app():
     views = [stock_views]
     register_blueprints(app, views)
 
-    from web.admin.views import crawl as admin_crawl_views
+    from web.admin.views import sync as admin_sync_views
     from web.admin.views import portfolio as admin_portfolio_views
 
-    admin_views = [admin_crawl_views, admin_portfolio_views, ]
+    admin_views = [admin_sync_views, admin_portfolio_views, ]
 
     with app.app_context():
         container.wire(modules=views)

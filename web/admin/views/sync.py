@@ -5,10 +5,10 @@ from flask_admin import BaseView, expose
 from celery.result import AsyncResult
 
 
-class CrawlView(BaseView):
+class SyncView(BaseView):
     @expose('/')
     def index(self):
-        return self.render('admin/crawl.html.j2')
+        return self.render('admin/sync.html.j2')
 
     @expose('/progress')
     def progress(self):
