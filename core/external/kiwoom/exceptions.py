@@ -10,6 +10,11 @@ class ConnectFailedError(KiwoomError):
         super().__init__('접속 실패')
 
 
+class DynamicCallFailedError(KiwoomError):
+    def __init__(self):
+        super().__init__('Dynamic Call 실패')
+
+
 class TransactionFailedError(KiwoomError):
     def __init__(self):
         super().__init__('트랜젝션 실패')

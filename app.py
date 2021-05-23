@@ -28,17 +28,12 @@ def create_app():
     container = Container()
     app.container = container
 
-    from web.stock import views as stock_views
-    views = [stock_views]
-    register_blueprints(app, views)
-
     from web.admin.views import sync as admin_sync_views
     from web.admin.views import portfolio as admin_portfolio_views
 
     admin_views = [admin_sync_views, admin_portfolio_views, ]
 
     with app.app_context():
-        container.wire(modules=views)
         container.wire(modules=admin_views)
     admin.init_app(app)
     db.init_app(app)

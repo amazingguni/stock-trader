@@ -14,10 +14,10 @@ class AccountRepository:
     def update(self, account: Account, update: typing.Dict[str, typing.Any]):
         account.update(**update)
 
-    def find_by_account_number(self, real: bool, number: str):
-        return Account.objects(number=number, real=real).first()
+    def find_by_account_number(self, number: str):
+        return Account.objects(number=number).first()
 
-    def find_primary_accounts(self, query: typing.Dict[str, typing.Any] = None):
+    def find_primary_account(self, query: typing.Dict[str, typing.Any] = None):
         query = query if query else {}
         query['primary'] = True
-        return list(Account.objects(**query))
+        return Account.objects(**query).first()

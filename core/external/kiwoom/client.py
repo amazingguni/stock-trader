@@ -2,7 +2,6 @@ import time
 import typing
 import traceback
 
-from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QEventLoop, QTimer
 
 try:
@@ -16,7 +15,7 @@ from .input_value import InputValue
 from .response import ConnectResponse, RequestResponse
 from .account_info_type import AccountInfoType
 from .request_done_condition import RequestDoneCondition, DefaultDoneCondition
-from .exceptions import ConnectFailedError, TransactionFailedError, RateLimitExceeded
+from .exceptions import ConnectFailedError, TransactionFailedError, RateLimitExceeded, DynamicCallFailedError
 
 DYNAMIC_TIME_INTERVAL = 0.2
 TR_REQ_TIME_INTERVAL = 3.6
@@ -68,7 +67,10 @@ class OpenApiClient(QAxWidget):
         return self.dynamicCall('GetConnectState()')
 
     def get_login_info(self, info_type: AccountInfoType):
-        return self.dynamicCall('GetLoginInfo(QString)', info_type.name)
+        ret = self.dynamicCall('GetLoginInfo(QString)', info_type.name)
+        if ret == None:
+            raise DynamicCallFailedError()
+        return ret
 
     def set_input_value(self, _id: str, value: str):
         self.dynamicCall("SetInputValue(QString, QString)", _id, value)

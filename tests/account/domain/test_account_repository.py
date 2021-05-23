@@ -43,17 +43,15 @@ def test_find_by_account_number(mongo_connection):
 
     repository = AccountRepository()
     assert repository.find_by_account_number(
-        real=False, number='12345678') == imitation_account
-    assert not repository.find_by_account_number(real=True, number='12345678')
+        number='12345678') == imitation_account
 
     assert repository.find_by_account_number(
-        real=True, number='00000000') == real_account
-    assert not repository.find_by_account_number(real=False, number='00000000')
+        number='00000000') == real_account
 
-    assert not repository.find_by_account_number(real=True, number='INVALID')
+    assert not repository.find_by_account_number(number='INVALID')
 
 
-def test_find_primary_accounts(mongo_connection):
+def test_find_primary_account(mongo_connection):
     imitation_primary_account = Account(securities_company='키움증권',
                                         number='12345678', real=False, primary=True).save()
     real_primary_account = Account(securities_company='우리증권',
@@ -63,10 +61,8 @@ def test_find_primary_accounts(mongo_connection):
 
     repository = AccountRepository()
 
-    assert len(repository.find_primary_accounts()) == 2
-    ret_accounts = repository.find_primary_accounts({'real': False})
-    assert len(ret_accounts) == 1
-    assert ret_accounts[0] == imitation_primary_account
-    ret_accounts = repository.find_primary_accounts({'real': True})
-    assert len(ret_accounts) == 1
-    assert ret_accounts[0] == real_primary_account
+    assert repository.find_primary_account()
+    assert repository.find_primary_account(
+        {'real': False}) == imitation_primary_account
+    assert repository.find_primary_account(
+        {'real': True}) == real_primary_account

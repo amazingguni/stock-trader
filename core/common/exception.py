@@ -1,0 +1,2 @@
+class StockTraderError(Exception):
+    pass

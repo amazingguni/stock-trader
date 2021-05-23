@@ -2,11 +2,14 @@
 {% import 'admin/lib.html' as lib with context %}
 
 {% block body %}
-  <form cssClass="form-horizontal" method="post" action="{{ url_for('stock.sync') }}">
+  <form cssClass="form-horizontal" method="post" action="{{ url_for('sync-admin.sync_account') }}">
+    <button type="submit" class="btn btn-primary">Sync account</button>
+  </form>
+  <form cssClass="form-horizontal" method="post" action="{{ url_for('sync-admin.sync_stock') }}">
     <button type="submit" class="btn btn-primary">Sync stock list</button>
   </form>
   </br>
-  <form cssClass="form-horizontal" method="post" action="{{ url_for('stock.crawl_all_daily_summaries') }}">
+  <form cssClass="form-horizontal" method="post" action="{{ url_for('sync-admin.sync_all_daily_summaries') }}">
     <button type="submit" class="btn btn-primary">Crawl all daily summary</button>
   </form>
 {% endblock %}

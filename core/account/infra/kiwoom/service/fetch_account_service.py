@@ -10,8 +10,8 @@ class KiwoomFetchAccountService(FetchAccountService):
 
     def fetch_all(self):
         server_gubun = self.openapi_client.get_login_info(
-            AccountInfoType.SetServerGubun)
-        is_real = server_gubun != IMITATION_SERVER
+            AccountInfoType.GetServerGubun)
+        is_real = int(server_gubun) != IMITATION_SERVER
         client_ret = self.openapi_client.get_login_info(
             AccountInfoType.ACCLIST)
 

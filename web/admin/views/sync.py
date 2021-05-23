@@ -1,8 +1,11 @@
 import json
 
-from flask import request
+from flask import request, redirect, url_for
 from flask_admin import BaseView, expose
 from celery.result import AsyncResult
+
+from tasks.stock_tasks import sync_stocks
+from tasks.securities_tasks import sync_account, sync_all_daily_summaries
 
 
 class SyncView(BaseView):
@@ -28,3 +31,18 @@ class SyncView(BaseView):
     def job_status(self):
         job_id = request.args.get('job_id')
         return self.render('admin/job_status.html.j2', job_id=job_id)
+
+    @expose('/stock', methods=['POST'])
+    def sync_stock(self):
+        job = sync_stocks.delay()
+        return redirect(url_for('stock-admin.index_view', job_id=job.id))
+
+    @expose('/account', methods=['POST'])
+    def sync_account(self):
+        job = sync_account.delay()
+        return redirect(url_for('account-admin.index_view', job_id=job.id))
+
+    @expose('/all-daily-summaries', methods=['POST'])
+    def sync_all_daily_summaries(self):
+        job = sync_all_daily_summaries.delay()
+        return redirect(url_for('sync-admin.job_status', job_id=job.id))
