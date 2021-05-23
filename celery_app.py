@@ -1,3 +1,4 @@
+import importlib
 import sys
 from celery import Celery
 import mongoengine
@@ -9,8 +10,8 @@ from config import get_config_by_env
 from core.external.kiwoom import OpenApiClient
 
 TASKS_MODULE = [
-    "tasks.stock_summaries",
-    "tasks.stock",
+    "tasks.securities_tasks",
+    "tasks.stock_tasks",
 ]
 
 
@@ -31,9 +32,9 @@ def make_celery():
 
     class ContextTask(celery.Task):
         def __call__(self, *args, **kwargs):
-            from tasks import stock_summaries
-            from tasks import stock
-            container.wire(modules=[stock_summaries, stock])
+            modules = [importlib.import_module(
+                full_module_name) for full_module_name in TASKS_MODULE]
+            container.wire(modules=modules)
             return self.run(*args, **kwargs)
 
     celery.Task = ContextTask
