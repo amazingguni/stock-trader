@@ -11,7 +11,7 @@ class MockJob:
     id: int
 
 
-@mock.patch('tasks.stock.sync_stocks.delay')
+@mock.patch('tasks.stock_tasks.sync_stocks.delay')
 def test_sync(mock_delay, client):
     mock_delay.return_value = MockJob(id=1)
     response = client.post(url_for('stock.sync'))
