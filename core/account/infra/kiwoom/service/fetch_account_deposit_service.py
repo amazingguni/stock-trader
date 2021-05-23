@@ -5,8 +5,8 @@ from core.external.kiwoom import OpenApiClient, InputValue
 
 
 class KiwoomFetchAccountDepositService(FetchAccountDepositService):
-    def __init__(self, client: OpenApiClient):
-        self.client = client
+    def __init__(self, openapi_client: OpenApiClient):
+        self.openapi_client = openapi_client
 
     def fetch(self, account: Account):
         input_values = [
@@ -17,7 +17,7 @@ class KiwoomFetchAccountDepositService(FetchAccountDepositService):
         ]
         row_keys = ['예수금', 'd+2출금가능금액']
         trcode = 'opw00001'
-        response = self.client.comm_rq_single_data(
+        response = self.openapi_client.comm_rq_single_data(
             trcode, input_values, row_keys)
 
         deposits = []

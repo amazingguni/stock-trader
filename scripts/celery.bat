@@ -1,7 +1,7 @@
 @Echo off
-@Echo Celery Start
+@Echo Start celery batch script
 
 :repeat
-@Echo Start existing celery
+@Echo Start celery again
 call poetry run celery -A celery_app worker -l INFO  --pool=solo
 goto repeat

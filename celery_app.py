@@ -1,13 +1,10 @@
 import importlib
-import sys
 from celery import Celery
 import mongoengine
 
-from PyQt5.QtWidgets import QApplication
 
 from container import Container
 from config import get_config_by_env
-from core.external.kiwoom import OpenApiClient
 
 TASKS_MODULE = [
     "tasks.securities_tasks",
@@ -26,9 +23,7 @@ def make_celery():
         db=config.MONGODB_SETTINGS['db'],
         host=config.MONGODB_SETTINGS['host'],
         port=config.MONGODB_SETTINGS['port'])
-    if not QApplication.instance():
-        _ = QApplication(sys.argv)
-    container = Container(openapi_client=OpenApiClient())
+    container = Container()
 
     class ContextTask(celery.Task):
         def __call__(self, *args, **kwargs):

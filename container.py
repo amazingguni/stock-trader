@@ -1,5 +1,7 @@
 from dependency_injector import containers, providers
 
+from PyQt5.QtWidgets import QApplication
+
 from core.external.kiwoom import OpenApiClient
 
 from core.stock.application.sync_stock_service import SyncStockService
@@ -13,8 +15,17 @@ from core.summary.domain.repository import DailyStockSummaryRepository
 from core.summary.infra.kiwoom.service import KiwoomFetchDailyStockSummaryService
 
 
+def create_openapi_client():
+    if not QApplication.instance():
+        qapp = QApplication([])
+    openapi_client = OpenApiClient()
+    openapi_client.connect()
+    yield openapi_client
+    qapp.exit()
+
+
 class Container(containers.DeclarativeContainer):
-    openapi_client = providers.Dependency(instance_of=OpenApiClient)
+    openapi_client = providers.Resource(create_openapi_client)
     stock_repository = providers.Factory(StockRepository)
 
     deposit_repository = providers.Factory(DepositRepository)

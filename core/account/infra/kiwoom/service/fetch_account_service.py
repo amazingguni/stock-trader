@@ -5,14 +5,15 @@ from core.external.kiwoom import OpenApiClient, AccountInfoType, IMITATION_SERVE
 
 
 class KiwoomFetchAccountService(FetchAccountService):
-    def __init__(self, client: OpenApiClient):
-        self.client = client
+    def __init__(self, openapi_client: OpenApiClient):
+        self.openapi_client = openapi_client
 
     def fetch_all(self):
-        server_gubun = self.client.get_login_info(
+        server_gubun = self.openapi_client.get_login_info(
             AccountInfoType.SetServerGubun)
         is_real = server_gubun != IMITATION_SERVER
-        client_ret = self.client.get_login_info(AccountInfoType.ACCLIST)
+        client_ret = self.openapi_client.get_login_info(
+            AccountInfoType.ACCLIST)
 
         accounts = []
         for account_number in client_ret.split(';'):

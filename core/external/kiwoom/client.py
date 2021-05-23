@@ -43,6 +43,7 @@ class OpenApiClient(QAxWidget):
 
     def __create_open_api_instance(self):
         self.setControl("KHOPENAPI.KHOpenAPICtrl.1")
+
     def __receive_msg(self, sScrNo, sRQName, sTrCode, sMsg):
         print(sMsg)
 

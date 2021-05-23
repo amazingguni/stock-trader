@@ -4,7 +4,7 @@ from container import Container
 from celery_app import app
 
 from core.summary.application import SyncDailyStockSummaryService
-from core.account.domain.service import FetchAccountDepositService
+from core.account.domain.service import FetchAccountDepositService, FetchAccountService
 
 
 @app.task(bind=True)
@@ -26,9 +26,12 @@ def sync_daily_stock_all(self,
 @app.task(bind=True)
 @inject
 def fetch_account_deposit(self,
+                          fetch_account_service: FetchAccountService = Provide[
+                              Container.fetch_account_service],
                           fetch_account_deposit_service: FetchAccountDepositService
                           = Provide[Container.fetch_account_deposit_service]):
-    deposit = fetch_account_deposit_service.fetch()
+    accounts = fetch_account_service.fetch_all()
+    deposit = fetch_account_deposit_service.fetch(accounts[0])
     return {
         'deposit': deposit.deposit,
         'd2_withdrawable_deposit': deposit.d2_withdrawable_deposit,
