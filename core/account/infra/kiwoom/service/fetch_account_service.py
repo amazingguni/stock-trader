@@ -25,4 +25,4 @@ class KiwoomFetchAccountService(FetchAccountService):
                               real=is_real,
                               primary=False)
             accounts.append(account)
-        return accounts
+        return accounts 

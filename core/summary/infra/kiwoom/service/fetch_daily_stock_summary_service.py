@@ -1,4 +1,3 @@
-import typing
 from time import sleep
 from datetime import date, datetime
 
@@ -13,7 +12,7 @@ class DailyStockDoneCondition(RequestDoneCondition):
         self.start_date_str = start_date.strftime(
             '%Y%m%d') if start_date else '00000101'
 
-    def done(self, row: typing.Dict[str, str]):
+    def done(self, row: dict[str, str]):
         return row['일자'] <= self.start_date_str
 
 

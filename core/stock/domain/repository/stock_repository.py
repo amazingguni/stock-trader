@@ -16,7 +16,7 @@ class StockRepository:
     def save(self, stock: Stock):
         stock.save()
 
-    def save_all(self, stocks: typing.List[Stock]):
+    def save_all(self, stocks: list[Stock]):
         Stock.objects.insert(stocks)
 
     def find_all(self):

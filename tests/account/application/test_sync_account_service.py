@@ -30,7 +30,7 @@ def test_mock_sync_GIVEN_no_primary_accounts(account_repository, deposit_reposit
         mock_fetch_account_service, mock_fetch_account_deposit_service)
     service.sync()
 
-    mock_fetch_account_deposit_service.fetch.assert_called_with(account)
+    mock_fetch_account_deposit_service.fetch.assert_called_with(account.number)
     assert Account.objects.count() == 1
     assert Account.objects.first().number == '00000000'
     assert Deposit.objects.count() == 1
@@ -54,7 +54,7 @@ def test_mock_sync_GIVEN_has_primary_accounts(account_repository, deposit_reposi
     service.sync()
 
     mock_fetch_account_deposit_service.fetch.assert_called_with(
-        existing_primary_account)
+        existing_primary_account.number)
     assert Account.objects.count() == 2
     assert Deposit.objects.count() == 1
 
@@ -75,7 +75,7 @@ def test_mock_sync_GIVEN_has_real_primary_account_but_connected_imitation_accoun
     service.sync()
 
     mock_fetch_account_deposit_service.fetch.assert_called_with(
-        account)
+        account.number)
 
 
 def test_mock_sync_GIVEN_multiple_call_THEN_same_account_only_increase_result(account_repository, deposit_repository):

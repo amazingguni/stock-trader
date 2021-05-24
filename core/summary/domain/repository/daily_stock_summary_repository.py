@@ -1,4 +1,3 @@
-import typing
 from core.summary.domain import DailyStockSummary
 
 
@@ -9,7 +8,7 @@ class DailyStockSummaryRepository:
     def save(self, stock: DailyStockSummary):
         stock.save()
 
-    def save_all(self, stocks: typing.List[DailyStockSummary]):
+    def save_all(self, stocks: list[DailyStockSummary]):
         if stocks:
             DailyStockSummary.objects.insert(stocks)
 

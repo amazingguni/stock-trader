@@ -1,5 +1,4 @@
 import time
-import typing
 import traceback
 
 from PyQt5.QtCore import QEventLoop, QTimer
@@ -75,8 +74,8 @@ class OpenApiClient(QAxWidget):
     def set_input_value(self, _id: str, value: str):
         self.dynamicCall("SetInputValue(QString, QString)", _id, value)
 
-    def comm_rq_data_repeat(self, trcode: str, input_values: typing.List[InputValue],
-                            row_keys: typing.List[str], retry: int = 40,
+    def comm_rq_data_repeat(self, trcode: str, input_values: list[InputValue],
+                            row_keys: list[str], retry: int = 40,
                             done_condition: RequestDoneCondition = DefaultDoneCondition()):
         response = RequestResponse()
         _next = FIRST_REQUEST
@@ -92,8 +91,8 @@ class OpenApiClient(QAxWidget):
 
         return response
 
-    def comm_rq_data(self, trcode: str, input_values: typing.List[InputValue],
-                     next: int, row_keys: typing.List[str],
+    def comm_rq_data(self, trcode: str, input_values: list[InputValue],
+                     next: int, row_keys: list[str],
                      done_condition: RequestDoneCondition = DefaultDoneCondition()):
         if not self.get_connect_state():
             self.connect()
@@ -142,8 +141,8 @@ class OpenApiClient(QAxWidget):
             raise TransactionFailedError
         return response
 
-    def comm_rq_single_data(self, trcode: str, input_values: typing.List[InputValue],
-                            row_keys: typing.List[str]):
+    def comm_rq_single_data(self, trcode: str, input_values: list[InputValue],
+                            row_keys: list[str]):
         if not self.get_connect_state():
             self.connect()
         for input_value in input_values:

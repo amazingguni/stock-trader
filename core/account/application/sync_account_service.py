@@ -28,7 +28,8 @@ class SyncAccountService:
             accounts[0].primary = True
             self.account_repository.save(accounts[0])
             primary_account = accounts[0]
-        deposit = self.fetch_account_deposit_service.fetch(primary_account)
+        deposit = self.fetch_account_deposit_service.fetch(
+            primary_account.number)
         deposit.account = primary_account
         self.deposit_repository.save(deposit)
 

@@ -57,5 +57,10 @@ def fetch_account_service(openapi_client):
 
 
 @pytest.fixture(scope='function')
+def kiwoom_account(fetch_account_service):
+    return fetch_account_service.fetch_all()[0]
+
+
+@pytest.fixture(scope='function')
 def fetch_account_deposit_service(openapi_client):
     return KiwoomFetchAccountDepositService(openapi_client)
