@@ -33,7 +33,7 @@ class SyncDailyStockSummaryService:
         total = len(stocks)
         for i, stock in enumerate(stocks):
             yield i, total, stock
-            latest_date = stock_id_latest_date_dic.get(stock.id, None)
+            latest_date = stock_id_latest_date_dic.get(stock.code, None)
             if self.__is_already_synced(latest_date, last_market_opening_day):
                 continue
             self.sync(stock, latest_date, end_date)
