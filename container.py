@@ -12,7 +12,7 @@ from core.account.infra.kiwoom.service import KiwoomFetchAccountService, KiwoomF
 from core.account.application import SyncAccountService
 
 
-from core.summary.application import SyncDailyStockSummaryService
+from core.summary.application import SyncDailyStockSummaryService, DeleteDailyStockSummaryService
 from core.summary.domain.repository import DailyStockSummaryRepository
 from core.summary.infra.kiwoom.service import KiwoomFetchDailyStockSummaryService
 
@@ -53,5 +53,9 @@ class Container(containers.DeclarativeContainer):
     sync_daily_stock_summary_service = providers.Factory(
         SyncDailyStockSummaryService,
         fetch_daily_stock_summary_service=fetch_daily_stock_summary_service,
+        stock_repository=stock_repository,
+        daily_stock_summary_repository=daily_stock_summary_repository)
+    delete_daily_stock_summary_service = providers.Factory(
+        DeleteDailyStockSummaryService,
         stock_repository=stock_repository,
         daily_stock_summary_repository=daily_stock_summary_repository)

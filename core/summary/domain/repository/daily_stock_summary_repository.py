@@ -15,9 +15,12 @@ class DailyStockSummaryRepository:
     def find_latest_dates_by_stock_id(self):
         pipeline = [{
             "$group": {
-                '_id':  '$stock',
+                '_id':  '$stock_code',
                 'latest_date': {'$max': '$date'}
             }
         }]
         cursor = DailyStockSummary.objects.aggregate(pipeline)
         return {item['_id']: item['latest_date'].date() for item in cursor}
+
+    def delete_by_stock_code(self, stock_code: str):
+        DailyStockSummary.objects(stock_code=stock_code).delete()

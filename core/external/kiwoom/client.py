@@ -67,7 +67,7 @@ class OpenApiClient(QAxWidget):
 
     def get_login_info(self, info_type: AccountInfoType):
         ret = self.dynamicCall('GetLoginInfo(QString)', info_type.name)
-        if ret == None:
+        if not ret:
             raise DynamicCallFailedError()
         return ret
 

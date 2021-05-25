@@ -7,7 +7,7 @@ from .views.deposit import DepositView
 from .views.stock import StockView
 from .views.daily_stock_summary import DailyStockSummaryView
 from .views.sync import SyncView
-from .views.portfolio import PortfolioView
+# from .views.portfolio import PortfolioView
 
 admin = Admin(name='Stock Trader', url='/admin', template_mode='bootstrap4')
 # admin.add_view(PortfolioView(name='Portfolio',

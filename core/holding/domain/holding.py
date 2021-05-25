@@ -1,15 +1,12 @@
 from datetime import datetime
 
 from mongoengine import Document, \
-    ReferenceField, DateTimeField, IntField, FloatField
-
-from core.stock.domain import Stock
-from core.account.domain import Account
-
+    StringField, DateTimeField, IntField, FloatField
 
 class Holding(Document):
-    account = ReferenceField(Account, help_text='보유 종목이 포함된 계좌')
-    stock = ReferenceField(Stock, help_text='종목')
+    account_number = StringField(required=True, help_text='보유 종목이 포함된 계좌번호')
+    stock_name = StringField(required=True, help_text='종목 이름')
+    stock_code = StringField(required=True, help_text='종목 코드')
     quantity = IntField(help_text='보유수량')
     purchase_price = IntField(help_text='매입가')
     current_price = IntField(help_text='현재가')

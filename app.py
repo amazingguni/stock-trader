@@ -29,9 +29,11 @@ def create_app():
     app.container = container
 
     from web.admin.views import sync as admin_sync_views
+    from web.admin.views import stock as admin_stock_views
     from web.admin.views import portfolio as admin_portfolio_views
 
-    admin_views = [admin_sync_views, admin_portfolio_views, ]
+    admin_views = [admin_sync_views,
+                   admin_stock_views, admin_portfolio_views, ]
 
     with app.app_context():
         container.wire(modules=admin_views)

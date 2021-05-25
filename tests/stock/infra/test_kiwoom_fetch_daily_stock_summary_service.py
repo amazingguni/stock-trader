@@ -10,7 +10,8 @@ from core.summary.infra.kiwoom.service import KiwoomFetchDailyStockSummaryServic
 @pytest.mark.kiwoom
 def test_fetch_all(openapi_client):
     summaries = KiwoomFetchDailyStockSummaryService(openapi_client).fetch_all(
-        stock_code='005930', start_date=date(2021, 4, 12), end_date=date(2021, 4, 16))
+        stock_name='삼성전자', stock_code='005930',
+        start_date=date(2021, 4, 12), end_date=date(2021, 4, 16))
     assert len(summaries) == 4
 
 
@@ -21,7 +22,8 @@ def test_mock_fetch_all():
     )
 
     summaries = KiwoomFetchDailyStockSummaryService(mock_client).fetch_all(
-        stock_code='000000', start_date=date(2010, 1, 1), end_date=date(2010, 5, 1))
+        stock_name='삼성전자', stock_code='000000',
+        start_date=date(2010, 1, 1), end_date=date(2010, 5, 1))
 
     assert len(summaries) == 100
     assert summaries[0].open == 80

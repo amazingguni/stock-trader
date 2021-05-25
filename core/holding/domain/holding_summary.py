@@ -1,13 +1,11 @@
 from datetime import datetime
 
 from mongoengine import Document, \
-    ReferenceField, DateTimeField, IntField, FloatField
-
-from core.account.domain import Account
+    StringField, DateTimeField, IntField, FloatField
 
 
 class HoldingSummary(Document):
-    account = ReferenceField(Account)
+    account_number = StringField(required=True)
     total_purchase_price = IntField(help_text='총매입금액')
     total_eval_price = IntField(help_text='총평가금액')
     total_eval_profit_loss_price = IntField(help_text='총평가손익금액')

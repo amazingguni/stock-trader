@@ -40,9 +40,7 @@ class SyncDailyStockSummaryService:
 
     def sync(self, stock: Stock, start_date: date, end_date: date):
         summaries = self.fetch_daily_stock_summary_service.fetch_all(
-            stock.code, start_date, end_date)
-        for summary in summaries:
-            summary.stock = stock
+            stock.name, stock.code, start_date, end_date)
         self.daily_stock_summary_repository.save_all(summaries)
         end_date = summaries[-1].date - timedelta(days=1)
 

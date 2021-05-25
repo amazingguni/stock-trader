@@ -32,7 +32,8 @@ def stock(mongo_connection):
 def get_dummy_daily_stock_summary(stock):
     return DailyStockSummary(
         date=date(2010, 10, 2),
-        stock=stock,
+        stock_name=stock.name,
+        stock_code=stock.code,
         open=1,
         high=1,
         low=1,

@@ -20,7 +20,7 @@ class KiwoomFetchDailyStockSummaryService(FetchDailyStockSummaryService):
     def __init__(self, openapi_client: OpenApiClient):
         self.openapi_client = openapi_client
 
-    def fetch_all(self, stock_code: str, start_date: date, end_date: date):
+    def fetch_all(self, stock_name: str, stock_code: str, start_date: date, end_date: date):
         input_values = [
             InputValue(s_id='종목코드', s_value=stock_code),
             InputValue(s_id='기준일자', s_value=end_date.strftime('%Y%m%d')),
@@ -33,17 +33,19 @@ class KiwoomFetchDailyStockSummaryService(FetchDailyStockSummaryService):
             response = self.openapi_client.comm_rq_data_repeat(
                 trcode, input_values, row_keys,
                 done_condition=done_condition)
-            return self.rows_to_summaries(response.rows)
+            return self.rows_to_summaries(response.rows, stock_name, stock_code)
         except TransactionFailedError:
             print(f'Fail to get {stock_code} daily summary. Exit!!')
             sleep(120)
             exit(1)
 
-    def rows_to_summaries(self, rows):
+    def rows_to_summaries(self, rows, stock_name, stock_code):
         summaries = []
         for row in rows:
             summaries.append(DailyStockSummary(
                 date=datetime.strptime(row['일자'], '%Y%m%d').date(),
+                stock_name=stock_name,
+                stock_code=stock_code,
                 open=row['시가'],
                 high=row['고가'],
                 low=row['저가'],

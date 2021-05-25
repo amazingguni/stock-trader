@@ -3,11 +3,6 @@ from flask_admin.contrib.mongoengine import ModelView
 
 
 class DailyStockSummaryView(ModelView):
-    form_ajax_refs = {
-        'stock': {
-            'fields': ('name', 'code',)
-        }
-    }
 
     def scaffold_sortable_columns(self):
         columns = super(DailyStockSummaryView,

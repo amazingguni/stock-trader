@@ -20,6 +20,7 @@ class KiwoomFetchHoldingService(FetchHoldingService):
 
         for row in response.rows:
             return HoldingSummary(
+                account_number=account_number,
                 total_purchase_price=int(row['총매입금액']),
                 total_eval_price=int(row['총평가금액']),
                 total_eval_profit_loss_price=int(row['총평가손익금액']),

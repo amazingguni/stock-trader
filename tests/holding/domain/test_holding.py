@@ -1,14 +1,11 @@
-from core.account.domain import Account
-from core.stock.domain import Stock
 from core.holding.domain import Holding
 
 
 def test_constructor():
-    account = Account(number='11111111')
-    stock = Stock(market=Stock.MARKET_KOSDAQ, name='우리회사', code='111111')
     Holding(
-        account=account,
-        stock=stock,
+        account_number='12412412412',
+        stock_name='우리회사',
+        stock_code='111111',
         quantity=10,
         purchase_price=1000,
         current_price=1101,

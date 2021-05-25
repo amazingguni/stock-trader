@@ -1,5 +1,4 @@
 
-import typing
 from core.stock.domain.stock import Stock
 
 
@@ -27,3 +26,6 @@ class StockRepository:
 
     def update(self, stock, update):
         stock.update(**update)
+
+    def find_by_id(self, id):
+        return Stock.objects(id=id).first()

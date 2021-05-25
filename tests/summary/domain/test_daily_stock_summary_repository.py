@@ -14,7 +14,8 @@ def get_dummy_daily_stock_summary():
     ).save()
     return DailyStockSummary(
         date=date(2010, 10, 2),
-        stock=stock,
+        stock_name=stock.name,
+        stock_code=stock.code,
         open=1,
         high=1,
         low=1,
@@ -51,18 +52,48 @@ def test_find_latest_dates_by_stock_id(mongo_connection):
         name='B_Company',
         code='00002'
     ).save()
-    DailyStockSummary(stock=stock_a, date=date(2016, 1, 2)).save()
-    DailyStockSummary(stock=stock_a, date=date(2008, 1, 2)).save()
-    DailyStockSummary(stock=stock_a, date=date(2018, 1, 2)).save()
+    DailyStockSummary(stock_name=stock_a.name,
+                      stock_code=stock_a.code, date=date(2016, 1, 2)).save()
+    DailyStockSummary(stock_name=stock_a.name,
+                      stock_code=stock_a.code, date=date(2008, 1, 2)).save()
+    DailyStockSummary(stock_name=stock_a.name,
+                      stock_code=stock_a.code, date=date(2018, 1, 2)).save()
 
-    DailyStockSummary(stock=stock_b, date=date(2017, 1, 2)).save()
-    DailyStockSummary(stock=stock_b, date=date(2020, 1, 2)).save()
-    DailyStockSummary(stock=stock_b, date=date(2001, 1, 2)).save()
+    DailyStockSummary(stock_name=stock_b.name,
+                      stock_code=stock_b.code, date=date(2017, 1, 2)).save()
+    DailyStockSummary(stock_name=stock_b.name,
+                      stock_code=stock_b.code, date=date(2020, 1, 2)).save()
+    DailyStockSummary(stock_name=stock_b.name,
+                      stock_code=stock_b.code, date=date(2001, 1, 2)).save()
 
     # When
     stock_id_latest_date_dic = DailyStockSummaryRepository().find_latest_dates_by_stock_id()
 
     # Then
     assert stock_id_latest_date_dic
-    assert stock_id_latest_date_dic[stock_a.id] == date(2018, 1, 2)
-    assert stock_id_latest_date_dic[stock_b.id] == date(2020, 1, 2)
+    assert stock_id_latest_date_dic[stock_a.code] == date(2018, 1, 2)
+    assert stock_id_latest_date_dic[stock_b.code] == date(2020, 1, 2)
+
+
+def test_delete_by_stock_code(mongo_connection):
+    stock_a = Stock(
+        market=Stock.MARKET_KOSDAQ,
+        name='A_Company',
+        code='00001'
+    ).save()
+    stock_b = Stock(
+        market=Stock.MARKET_KOSDAQ,
+        name='B_Company',
+        code='00002'
+    ).save()
+    for _ in range(3):
+        DailyStockSummary(stock_name=stock_a.name,
+                          stock_code=stock_a.code, date=date(2018, 1, 2)).save()
+    DailyStockSummary(stock_name=stock_b.name,
+                      stock_code=stock_b.code, date=date(2017, 1, 2)).save()
+
+    # When
+    DailyStockSummaryRepository().delete_by_stock_code(stock_a.code)
+
+    assert DailyStockSummary.objects(stock_code=stock_a.code).count() == 0
+    assert DailyStockSummary.objects(stock_code=stock_b.code).count() == 1
