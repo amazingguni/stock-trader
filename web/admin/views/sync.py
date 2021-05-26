@@ -35,13 +35,13 @@ class SyncView(BaseView):
     @expose('/stock', methods=['POST'])
     def sync_stock(self):
         job = sync_stocks.delay()
-        job.wait(timeout=60)
+        job.wait(timeout=120)
         return redirect(url_for('stock-admin.index_view'))
 
     @expose('/account', methods=['POST'])
     def sync_account(self):
         job = sync_account.delay()
-        job.wait(timeout=10)
+        job.wait(timeout=30)
         return redirect(url_for('account-admin.index_view'))
 
     @expose('/all-daily-summaries', methods=['POST'])
@@ -52,5 +52,5 @@ class SyncView(BaseView):
     @expose('/holding-summary', methods=['POST'])
     def sync_holding_summary(self):
         job = sync_holding_summary.delay()
-        job.wait(timeout=10)
+        job.wait(timeout=30)
         return redirect(url_for('holding-summary-admin.index_view'))
