@@ -1,5 +1,6 @@
 import importlib
 from celery import Celery
+from celery.schedules import crontab
 import mongoengine
 
 
@@ -18,6 +19,22 @@ def make_celery():
         backend=config.CELERY_RESULT_BACKEND,
         broker=config.CELERY_BROKER_URL,
         include=TASKS_MODULE
+    )
+    celery.conf.update(
+        beat_schedule={
+            'sync_stocks': {
+                'task': 'tasks.stock_tasks.sync_stocks',
+                'schedule': crontab(hour='6')
+            },
+            'sync_account': {
+                'task': 'tasks.securities_tasks.sync_account',
+                'schedule': crontab(hour='6')
+            },
+            'sync_all_daily_summaries': {
+                'task': 'tasks.securities_tasks.sync_all_daily_summaries',
+                'schedule': crontab(hour='6')
+            }
+        }
     )
     mongoengine.connect(
         db=config.MONGODB_SETTINGS['db'],

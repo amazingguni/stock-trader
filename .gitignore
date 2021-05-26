@@ -137,3 +137,6 @@ dmypy.json
 # db.sqlite
 db.sqlite
 test.db.sqlite
+
+# Celery beat
+celerybeat-schedule.*
