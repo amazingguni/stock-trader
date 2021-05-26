@@ -25,3 +25,10 @@ def sync_all_daily_summaries(self,
         print(f'{stock.name}({i + 1}/{stock_cnt})')
 
     return {'message': 'DONE', 'current': stock_cnt, 'total': stock_cnt}
+
+
+@app.task(bind=True)
+@inject
+def sync_holding_summary(self,
+                         sync_holding_summary_service=Provide[Container.sync_holding_summary_service]):
+    sync_holding_summary_service.sync()

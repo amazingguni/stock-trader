@@ -1,14 +1,19 @@
 from core.external.kiwoom import OpenApiClient, InputValue
 
 from core.holding.domain import HoldingSummary, Holding
-from core.holding.domain.service import FetchHoldingService
+from core.holding.domain.service import FetchHoldingSummaryService
 
 
-class KiwoomFetchHoldingService(FetchHoldingService):
+class KiwoomFetchHoldingSummaryService(FetchHoldingSummaryService):
     def __init__(self, openapi_client: OpenApiClient):
         self.openapi_client = openapi_client
 
-    def fetch_summary(self, account_number):
+    def fetch(self, account_number: str):
+        summary = self.__fetch_total_summary(account_number)
+        summary.holdings = self.__fetch_holdings(account_number)
+        return summary
+
+    def __fetch_total_summary(self, account_number: str):
         input_values = [
             InputValue(s_id='계좌번호', s_value=account_number),
         ]
@@ -28,7 +33,7 @@ class KiwoomFetchHoldingService(FetchHoldingService):
                 estimated_deposit=int(row['추정예탁자산']))
         return None
 
-    def fetch_stocks(self, account_number):
+    def __fetch_holdings(self, account_number: str):
         input_values = [
             InputValue(s_id='계좌번호', s_value=account_number),
         ]
@@ -41,7 +46,6 @@ class KiwoomFetchHoldingService(FetchHoldingService):
         holdings = []
         for row in response.rows:
             holding = Holding(
-                account_number=account_number,
                 stock_code=row['종목번호'],
                 stock_name=row['종목명'],
                 quantity=int(row['보유수량']),

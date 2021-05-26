@@ -1,1 +1,1 @@
-from .fetch_holding_service import *
+from .fetch_holding_summary_service import *

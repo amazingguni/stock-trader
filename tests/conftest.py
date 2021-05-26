@@ -9,6 +9,7 @@ from core.stock.domain.repository import StockRepository
 from core.summary.domain.repository import DailyStockSummaryRepository
 from core.account.domain.repository import AccountRepository, DepositRepository
 from core.account.infra.kiwoom.service import KiwoomFetchAccountService, KiwoomFetchAccountDepositService
+from core.holding.domain.repository import HoldingSummaryRepository
 from core.external.kiwoom import OpenApiClient
 
 
@@ -38,6 +39,11 @@ def account_repository(mongo_connection):
 @pytest.fixture(scope='function')
 def deposit_repository(mongo_connection):
     return DepositRepository()
+
+
+@pytest.fixture(scope='function')
+def holding_summary_repository(mongo_connection):
+    return HoldingSummaryRepository()
 
 # fixtures related to kiwoom open api
 

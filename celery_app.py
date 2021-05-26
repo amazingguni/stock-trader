@@ -24,15 +24,19 @@ def make_celery():
         beat_schedule={
             'sync_stocks': {
                 'task': 'tasks.stock_tasks.sync_stocks',
-                'schedule': crontab(hour='6')
+                'schedule': crontab(hour='18')
             },
             'sync_account': {
                 'task': 'tasks.securities_tasks.sync_account',
-                'schedule': crontab(hour='6')
+                'schedule': crontab(hour='18')
+            },
+            'sync_holding_summary': {
+                'task': 'tasks.securities_tasks.sync_holding_summary',
+                'schedule': crontab(hour='18')
             },
             'sync_all_daily_summaries': {
                 'task': 'tasks.securities_tasks.sync_all_daily_summaries',
-                'schedule': crontab(hour='6')
+                'schedule': crontab(hour='18')
             }
         }
     )

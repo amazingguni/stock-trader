@@ -11,10 +11,13 @@ from core.account.domain.repository import AccountRepository, DepositRepository
 from core.account.infra.kiwoom.service import KiwoomFetchAccountService, KiwoomFetchAccountDepositService
 from core.account.application import SyncAccountService
 
-
 from core.summary.application import SyncDailyStockSummaryService, DeleteDailyStockSummaryService
 from core.summary.domain.repository import DailyStockSummaryRepository
 from core.summary.infra.kiwoom.service import KiwoomFetchDailyStockSummaryService
+
+from core.holding.domain.repository import HoldingSummaryRepository
+from core.holding.infra.kiwoom.service import KiwoomFetchHoldingSummaryService
+from core.holding.application import SyncHoldingSummaryService
 
 
 def create_openapi_client():
@@ -59,3 +62,11 @@ class Container(containers.DeclarativeContainer):
         DeleteDailyStockSummaryService,
         stock_repository=stock_repository,
         daily_stock_summary_repository=daily_stock_summary_repository)
+    fetch_holding_summary_service = providers.Factory(
+        KiwoomFetchHoldingSummaryService, openapi_client=openapi_client)
+    holding_summary_repository = providers.Factory(HoldingSummaryRepository)
+    sync_holding_summary_service = providers.Factory(
+        SyncHoldingSummaryService,
+        account_repository=account_repository,
+        holding_summary_repository=holding_summary_repository,
+        fetch_holding_summary_service=fetch_holding_summary_service)

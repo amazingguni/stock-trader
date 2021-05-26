@@ -10,6 +10,10 @@
   </form>
   </br>
   <form cssClass="form-horizontal" method="post" action="{{ url_for('sync-admin.sync_all_daily_summaries') }}">
-    <button type="submit" class="btn btn-primary">Crawl all daily summary</button>
+    <button type="submit" class="btn btn-primary">Sync all daily summary</button>
+  </form>
+
+  <form cssClass="form-horizontal" method="post" action="{{ url_for('sync-admin.sync_holding_summary') }}">
+    <button type="submit" class="btn btn-primary">Sync holding summary</button>
   </form>
 {% endblock %}
