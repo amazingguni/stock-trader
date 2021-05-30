@@ -1,0 +1,30 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+flask-login = "*"
+flask-cors = "*"
+dependency-injector = "*"
+pyqt5 = "*"
+pandas = "*"
+pytz = "*"
+mongoengine = "*"
+lxml = "*"
+flask-admin = "*"
+flask-mongoengine = "*"
+celery = "*"
+redis = "*"
+requests = "*"
+
+[dev-packages]
+autopep8 = "*"
+pylint = "*"
+pytest = "*"
+mongomock = "*"
+coverage = "*"
+
+[requires]
+python_version = "3.9"
